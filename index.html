@@ -1,591 +1,705 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>HIIT TIMER</title>
-<link rel="apple-touch-icon" href="icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="HIIT">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;700;900&family=Share+Tech+Mono&display=swap">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#050505" />
+  <title>ACT HIIT Timer</title>
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="HIIT">
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: rgba(14, 14, 14, 0.88);
+      --panel-2: rgba(24, 24, 24, 0.92);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f4f4f4;
+      --muted: rgba(255,255,255,0.48);
+      --red: #f00612;
+      --red-soft: rgba(240, 6, 18, 0.55);
+      --blue: #8ed4ff;
+      --blue-soft: rgba(142, 212, 255, 0.58);
+      --dark-ring: rgba(255,255,255,0.08);
+      --radius: 16px;
+    }
 
-:root {
-  --work: #e8000a;
-  --rest: #aaa;
-  --done: #39ff14;
-  --text: #f0f0f0;
-  --muted: #555;
-  --dim: #1e1e1e;
-  --surface: #181818;
-}
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; min-height: 100%; }
 
-html, body { height: 100%; overflow: hidden; background: #0c0c0c; }
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
+      background:
+        linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.86)),
+        repeating-linear-gradient(135deg, rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(45deg,  rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 1px, transparent 1px, transparent 4px),
+        repeating-linear-gradient(135deg, rgba(0,0,0,.7) 0px, rgba(0,0,0,.7) 4px, transparent 4px, transparent 8px),
+        repeating-linear-gradient(45deg,  rgba(0,0,0,.7) 0px, rgba(0,0,0,.7) 4px, transparent 4px, transparent 8px),
+        radial-gradient(circle at 50% 0%, rgba(255,0,0,.11), transparent 36%),
+        #070707;
+      background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%, 100% 100%;
+      overflow-x: hidden;
+    }
 
-body {
-  color: var(--text);
-  font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  position: relative;
-}
+    button, select { font: inherit; }
+    button { cursor: pointer; user-select: none; }
+    button:active { transform: scale(.985); }
 
-body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-color: #0c0c0c;
-  background-image:
-    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 4px),
-    repeating-linear-gradient(45deg,  rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 4px),
-    repeating-linear-gradient(135deg, rgba(0,0,0,0.7) 0px, rgba(0,0,0,0.7) 4px, transparent 4px, transparent 8px),
-    repeating-linear-gradient(45deg,  rgba(0,0,0,0.7) 0px, rgba(0,0,0,0.7) 4px, transparent 4px, transparent 8px),
-    radial-gradient(ellipse at 30% 20%, rgba(110,110,110,0.28) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 80%, rgba(10,10,10,0.6) 0%, transparent 50%);
-  background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%, 100% 100%;
-}
+    .app {
+      width: min(430px, 100%);
+      min-height: 100vh;
+      min-height: 100svh;
+      margin: 0 auto;
+      padding: max(22px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+    }
 
-body > * { position: relative; z-index: 1; }
+    .hidden { display: none !important; }
 
-.footer {
-  position: fixed; bottom: 18px; left: 0; right: 0; z-index: 100;
-  text-align: center;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-  font-size: 11px; letter-spacing: 0.45em;
-  color: rgba(255,255,255,0.55);
-  text-transform: lowercase; pointer-events: none;
-}
+    .logo {
+      margin: 22px 0 22px;
+      text-align: center;
+      font-size: clamp(48px, 13vw, 68px);
+      font-weight: 950;
+      letter-spacing: .28em;
+      color: var(--red);
+      text-shadow: 0 0 18px rgba(240,6,18,.58), 0 0 42px rgba(240,6,18,.22);
+      transform: translateX(.14em);
+      line-height: 1;
+    }
 
-/* ======= SETUP ======= */
-#setup {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 16px;
-  width: 100%; padding: 16px 24px 60px;
-  overflow-y: auto; max-height: 100vh;
-}
+    .panel {
+      background: linear-gradient(180deg, rgba(22,22,22,.94), rgba(9,9,9,.88));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.035), 0 16px 40px rgba(0,0,0,.34);
+    }
 
-.logo {
-  font-size: clamp(42px, 11vw, 72px);
-  font-weight: 900; letter-spacing: .15em;
-  color: var(--work); line-height: 1;
-  text-shadow: 0 0 40px rgba(232,0,10,.4);
-}
+    .select-wrap { position: relative; margin-bottom: 12px; }
+    .select-wrap::after {
+      content: "⌄";
+      position: absolute;
+      right: 18px; top: 50%;
+      transform: translateY(-56%);
+      color: var(--red); font-size: 34px;
+      pointer-events: none;
+    }
 
-/* メニュー＋負荷 行 */
-.menu-row {
-  display: flex; align-items: center; gap: 8px;
-  width: min(360px, 92vw);
-}
+    select {
+      width: 100%;
+      appearance: none;
+      border: 1px solid rgba(240,6,18,.65);
+      background: rgba(10,10,10,.86);
+      color: #fff;
+      border-radius: 14px;
+      padding: 17px 52px 17px 18px;
+      font-size: 21px;
+      font-weight: 750;
+      outline: none;
+    }
 
-.menu-select {
-  flex: 1;
-  background: var(--surface);
-  border: 1px solid var(--dim);
-  border-bottom: 2px solid var(--muted);
-  color: var(--text);
-  font-family: 'Barlow Condensed', Arial, sans-serif;
-  font-size: 16px; font-weight: 700;
-  padding: 10px 10px;
-  outline: none; cursor: pointer;
-  appearance: none; -webkit-appearance: none;
-}
+    .levels {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      overflow: hidden;
+      margin-bottom: 12px;
+      border-radius: 14px;
+    }
+    .levels button {
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: rgba(18,18,18,.78);
+      color: #ddd;
+      padding: 13px 0;
+      font-size: 15px;
+      font-weight: 750;
+    }
+    .levels button:last-child { border-right: 0; }
+    .levels button.active {
+      background: linear-gradient(180deg, #ff111b, #b90008);
+      color: #fff;
+      box-shadow: 0 0 22px rgba(240,6,18,.38) inset, 0 0 18px rgba(240,6,18,.25);
+    }
 
-.load-group {
-  display: flex; gap: 4px;
-}
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .summary-card {
+      text-align: center;
+      padding: 11px 6px 10px;
+      border-radius: 13px;
+    }
+    .summary-card .label { font-size: 11px; color: rgba(255,255,255,.62); margin-bottom: 4px; letter-spacing: .04em; }
+    .summary-card .value { font-size: 28px; font-weight: 950; line-height: 1; }
+    .summary-card .unit { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 4px; }
 
-.load-btn {
-  background: transparent;
-  border: 1px solid var(--dim);
-  color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; letter-spacing: .05em;
-  padding: 8px 10px; cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-}
-.load-btn.active { border-color: var(--work); color: var(--work); background: rgba(232,0,10,0.1); }
+    .guide-card {
+      margin-bottom: 12px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+    .guide-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .guide-head strong { color: #fff; font-size: 14px; }
+    .guide-image-wrap { background: rgba(255,255,255,.035); padding: 8px; }
+    .guide-image {
+      width: 100%;
+      display: block;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.1);
+      cursor: zoom-in;
+      max-height: 220px;
+      object-fit: cover;
+      object-position: top center;
+      background: rgba(255,255,255,.06);
+    }
+    .guide-note {
+      padding: 8px 12px 12px;
+      color: rgba(255,255,255,.48);
+      font-size: 12px;
+      text-align: center;
+    }
 
-/* 数値グリッド */
-.setup-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; width: min(360px, 92vw);
-}
+    .start-btn {
+      width: 100%;
+      height: 74px;
+      border: 1px solid rgba(240,6,18,.75);
+      border-radius: 14px;
+      color: #fff;
+      background: linear-gradient(180deg, #ff111b, #b90008);
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing: .25em;
+      text-indent: .25em;
+      text-shadow: 0 1px 0 rgba(0,0,0,.3);
+      box-shadow: 0 0 26px rgba(240,6,18,.33);
+      margin-bottom: 12px;
+    }
 
-.field { display: flex; flex-direction: column; gap: 5px; }
-.field.full { grid-column: 1 / -1; }
+    .sound {
+      padding: 14px 12px 12px;
+      margin-bottom: auto;
+      border-radius: 14px;
+    }
+    .sound-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-weight: 750;
+    }
+    .sound-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .sound-block {
+      min-width: 0;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,.12);
+      padding-right: 8px;
+    }
+    .sound-block:last-child { border-right: 0; padding-right: 0; }
+    .sound-icon { color: var(--red); font-size: 20px; margin-bottom: 5px; }
+    .sound-label { font-size: 11px; color: rgba(255,255,255,.78); margin-bottom: 7px; white-space: nowrap; }
+    .sound-block select { font-size: 12px; padding: 9px 22px 9px 8px; border-color: rgba(255,255,255,.13); border-radius: 8px; }
 
-.field label {
-  font-size: 9px; letter-spacing: .35em; color: var(--muted);
-  text-transform: uppercase;
-  font-family: 'Share Tech Mono', monospace;
-}
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      letter-spacing: .3em;
+      padding-top: 22px;
+      padding-bottom: 4px;
+    }
 
-.field input[type="number"] {
-  background: var(--surface);
-  border: 1px solid var(--dim);
-  border-bottom: 2px solid var(--muted);
-  color: var(--text);
-  font-family: 'Barlow Condensed', Arial, sans-serif;
-  font-size: 38px; font-weight: 700;
-  text-align: center; padding: 8px 4px; width: 100%;
-  outline: none; -moz-appearance: textfield;
-  transition: border-color .2s;
-}
-.field input[type="number"]::-webkit-inner-spin-button,
-.field input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-.field input[type="number"]:focus { border-bottom-color: var(--work); }
+    .run-screen {
+      min-height: calc(100vh - max(22px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      padding-top: 20px;
+    }
 
-/* Sound */
-.sound-section {
-  width: min(360px, 92vw);
-  border: 1px solid var(--dim); padding: 12px;
-}
-.sound-title {
-  font-size: 9px; letter-spacing: .35em; color: var(--muted);
-  text-transform: uppercase;
-  font-family: 'Share Tech Mono', monospace; margin-bottom: 10px;
-}
-.sound-row {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 8px;
-}
-.sound-row:last-child { margin-bottom: 0; }
-.sound-label { font-size: 12px; letter-spacing: .08em; color: var(--rest); flex: 1; }
-.sound-label.c-work { color: var(--work); }
-.sound-label.c-done { color: var(--done); }
-.sound-controls { display: flex; align-items: center; gap: 6px; }
-.sound-select {
-  background: var(--surface); border: 1px solid var(--dim);
-  color: var(--text);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; padding: 4px 8px;
-  outline: none; cursor: pointer;
-  appearance: none; -webkit-appearance: none;
-  min-width: 95px; text-align: center;
-}
-.btn-test {
-  background: transparent; border: 1px solid var(--dim);
-  color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; padding: 4px 8px; cursor: pointer;
-}
-.btn-test:active { opacity: .6; }
+    .run-exercise {
+      font-size: 13px;
+      color: rgba(255,255,255,.55);
+      letter-spacing: .16em;
+      text-align: center;
+    }
 
-.btn-start {
-  width: min(360px, 92vw); padding: 15px;
-  font-family: 'Barlow Condensed', Arial, sans-serif;
-  font-size: 24px; font-weight: 900; letter-spacing: .25em;
-  background: var(--work); color: #fff;
-  border: none; cursor: pointer; text-transform: uppercase;
-}
-.btn-start:active { opacity: .8; }
+    .phase {
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: .45em;
+      transform: translateX(.225em);
+      text-shadow: 0 0 10px currentColor;
+    }
+    .phase.work { color: var(--red); }
+    .phase.rest { color: var(--blue); }
 
-/* ======= TIMER ======= */
-#timer {
-  display: none; flex-direction: column;
-  align-items: center; width: 100%; padding: 12px 24px 60px;
-}
+    .ring-wrap {
+      position: relative;
+      width: min(72vw, 310px);
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+    }
+    svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+    circle.track { stroke: var(--dark-ring); }
+    circle.progress {
+      transition: stroke-dashoffset .9s linear, stroke .25s ease, filter .25s ease;
+      stroke-linecap: round;
+    }
 
-.timer-menu-name {
-  font-size: 13px; letter-spacing: .3em; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  text-transform: uppercase; margin-bottom: 4px; height: 18px;
-}
+    .time-big {
+      position: absolute;
+      font-size: 78px;
+      font-weight: 950;
+      letter-spacing: -.04em;
+      text-shadow: 0 0 18px currentColor;
+    }
+    .work-color { color: var(--red); }
+    .rest-color { color: var(--blue); }
+    .blink { animation: blink .55s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity: .38; transform: scale(.985); } }
 
-.phase-banner {
-  font-size: clamp(12px, 3.2vw, 15px); font-weight: 300;
-  letter-spacing: .5em; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-  text-transform: uppercase; margin-bottom: 8px; height: 20px;
-  transition: color .4s;
-}
-.phase-banner.work { color: var(--work); }
-.phase-banner.rest { color: var(--rest); }
+    .set-read {
+      color: rgba(255,255,255,.46);
+      font-weight: 750;
+      letter-spacing: .32em;
+      transform: translateX(.16em);
+      font-size: 15px;
+    }
+    .set-read strong { color:#fff; font-size: 44px; letter-spacing: .02em; margin: 0 8px; }
 
-.ring-wrap {
-  position: relative;
-  width: clamp(210px, 54vw, 280px);
-  height: clamp(210px, 54vw, 280px);
-  margin-bottom: 8px;
-}
-.ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.ring-track { fill: none; stroke: #1a1a1a; stroke-width: 10; }
-.ring-prog {
-  fill: none; stroke: var(--work); stroke-width: 10; stroke-linecap: round;
-  transition: stroke-dashoffset .1s linear, stroke .4s;
-}
-.ring-center {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-.time-num {
-  font-size: clamp(68px, 17vw, 105px); font-weight: 900; line-height: 1;
-  color: var(--text); font-variant-numeric: tabular-nums; transition: color .4s;
-}
-.time-num.work { color: var(--work); text-shadow: 0 0 28px rgba(232,0,10,.35); }
-.time-num.rest { color: var(--rest); }
+    .toast {
+      min-height: 58px;
+      padding: 12px 20px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      color: rgba(255,255,255,.86);
+      text-align: center;
+      line-height: 1.45;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: .25s ease;
+      background: rgba(10,10,10,.66);
+      width: min(320px, 88vw);
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
 
-.sets-row {
-  display: flex; align-items: baseline; gap: 5px; margin-bottom: 16px;
-}
-.sets-label {
-  font-size: 11px; letter-spacing: .4em; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
-}
-.sets-count {
-  font-size: clamp(36px, 9vw, 56px); font-weight: 900; line-height: 1;
-  color: var(--text); font-variant-numeric: tabular-nums;
-  min-width: 2ch; text-align: center;
-}
-.sets-total { font-size: 16px; color: var(--muted); font-weight: 300; }
+    .run-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      width: min(280px, 78vw);
+      margin-bottom: 34px;
+    }
+    .run-actions button {
+      height: 56px;
+      background: rgba(10,10,10,.55);
+      border: 1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.58);
+      border-radius: 6px;
+      font-weight: 950;
+      letter-spacing: .25em;
+    }
+    .run-actions .pause-active { color: var(--red); border-color: rgba(240,6,18,.55); }
+    .run-actions.resting .pause-active { color: var(--blue); border-color: rgba(142,212,255,.58); }
 
-.controls { display: flex; gap: 10px; }
-.btn {
-  font-family: 'Barlow Condensed', Arial, sans-serif;
-  font-size: 16px; font-weight: 700; letter-spacing: .2em;
-  border: 1px solid var(--dim); background: transparent; color: var(--muted);
-  padding: 11px 22px; cursor: pointer; text-transform: uppercase;
-}
-.btn:active { opacity: .7; }
-.btn.primary { border-color: var(--work); color: var(--work); }
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: rgba(0,0,0,.86);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+    }
+    .modal.show { display: flex; }
+    .modal-inner { width: min(1100px, 100%); max-height: 92svh; position: relative; }
+    .modal img { width: 100%; max-height: 92svh; object-fit: contain; display: block; border-radius: 12px; background: #fff; }
+    .modal-close {
+      position: absolute;
+      top: -12px; right: -6px;
+      width: 42px; height: 42px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 999px;
+      background: rgba(0,0,0,.78);
+      color: #fff; font-size: 24px; line-height: 1;
+    }
 
-/* ======= DONE ======= */
-#done {
-  display: none; flex-direction: column;
-  align-items: center; gap: 18px; padding-bottom: 60px;
-}
-.done-text {
-  font-size: clamp(68px, 19vw, 116px); font-weight: 900; color: var(--done);
-  letter-spacing: .1em; text-shadow: 0 0 60px rgba(57,255,20,.4);
-  animation: glow 1.4s ease-in-out infinite;
-}
-.done-sub {
-  font-size: 12px; letter-spacing: .3em; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace; text-align: center; line-height: 1.8;
-}
-.btn-again {
-  font-family: 'Barlow Condensed', Arial, sans-serif;
-  font-size: 21px; font-weight: 900; letter-spacing: .2em;
-  background: var(--done); color: #000;
-  border: none; padding: 13px 38px; cursor: pointer;
-}
-.btn-again:active { opacity: .8; }
+    .complete-box {
+      width: min(330px, 90vw);
+      border: 1px solid rgba(240,6,18,.55);
+      border-radius: 16px;
+      background: rgba(10,10,10,.94);
+      padding: 28px 20px 22px;
+      text-align: center;
+      box-shadow: 0 0 42px rgba(240,6,18,.2);
+    }
+    .complete-box h2 { margin: 0 0 8px; color: var(--red); font-size: 28px; letter-spacing: .14em; }
+    .complete-box p { color: rgba(255,255,255,.7); line-height: 1.7; margin: 0 0 20px; }
+    .complete-box button {
+      width: 100%; height: 52px;
+      border: 0; border-radius: 10px;
+      background: linear-gradient(180deg, #ff111b, #b90008);
+      color: #fff; font-weight: 950; letter-spacing: .18em;
+    }
 
-@keyframes glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
-}
-</style>
+    @media (max-height: 760px) {
+      .logo { margin: 8px 0 14px; font-size: 42px; }
+      select { padding-top: 13px; padding-bottom: 13px; font-size: 18px; }
+      .levels button { padding: 10px 0; }
+      .summary-card { padding: 8px 4px; }
+      .summary-card .value { font-size: 24px; }
+      .guide-image { max-height: 150px; }
+      .start-btn { height: 60px; font-size: 24px; }
+      .sound { padding: 10px; }
+      .sound-title { margin-bottom: 8px; }
+      .sound-icon { display: none; }
+      .sound-label { font-size: 10px; }
+      .footer { padding-top: 12px; }
+    }
+  </style>
 </head>
 <body>
+  <main class="app">
+    <section id="settingsScreen">
+      <div class="logo">HIIT</div>
 
-<div class="footer">act creation.com</div>
-
-<!-- SETUP -->
-<div id="setup">
-  <div class="logo">HIIT</div>
-
-  <!-- メニュー選択 + 負荷 -->
-  <div class="menu-row">
-    <select class="menu-select" id="menu-select" onchange="applyMenu()">
-      <option value="custom">— 通常タイマー —</option>
-      <option value="burpee">バーピー</option>
-      <option value="mountain">マウンテンクライマー</option>
-      <option value="highknee">ハイニー</option>
-      <option value="shoulder">ショルダータッププランク</option>
-      <option value="lunge">ジャンピングランジ</option>
-      <option value="squat">ジャンプスクワット</option>
-      <option value="plank">プランク</option>
-    </select>
-    <div class="load-group">
-      <button class="load-btn" id="load-low"    onclick="setLoad('low')">低</button>
-      <button class="load-btn active" id="load-normal" onclick="setLoad('normal')">通常</button>
-      <button class="load-btn" id="load-high"   onclick="setLoad('high')">高</button>
-    </div>
-  </div>
-
-  <!-- 数値 -->
-  <div class="setup-grid">
-    <div class="field">
-      <label>トレーニング（秒）</label>
-      <input type="number" id="inp-work" value="20" min="1" max="999">
-    </div>
-    <div class="field">
-      <label>休憩（秒）</label>
-      <input type="number" id="inp-rest" value="10" min="1" max="999">
-    </div>
-    <div class="field full">
-      <label>セット数</label>
-      <input type="number" id="inp-sets" value="4" min="1" max="99">
-    </div>
-  </div>
-
-  <!-- サウンド -->
-  <div class="sound-section">
-    <div class="sound-title">🔊 &nbsp;サウンド設定</div>
-    <div class="sound-row">
-      <span class="sound-label c-work">トレーニング終了</span>
-      <div class="sound-controls">
-        <select class="sound-select" id="snd-work">
-          <option value="beep" selected>ビープ</option>
-          <option value="bell">ベル</option>
-          <option value="buzzer">ブザー</option>
-          <option value="blip">ブリップ</option>
-          <option value="none">なし</option>
-        </select>
-        <button class="btn-test" onclick="testSound('snd-work')">TEST</button>
+      <div class="select-wrap">
+        <select id="exerciseSelect" aria-label="種目を選択"></select>
       </div>
-    </div>
-    <div class="sound-row">
-      <span class="sound-label">休憩終了</span>
-      <div class="sound-controls">
-        <select class="sound-select" id="snd-rest">
-          <option value="beep">ビープ</option>
-          <option value="bell" selected>ベル</option>
-          <option value="buzzer">ブザー</option>
-          <option value="blip">ブリップ</option>
-          <option value="none">なし</option>
-        </select>
-        <button class="btn-test" onclick="testSound('snd-rest')">TEST</button>
+
+      <div class="levels panel" id="levelButtons">
+        <button data-level="low">LOW</button>
+        <button data-level="normal" class="active">NORMAL</button>
+        <button data-level="high">HARD</button>
+        <button data-level="advanced">TABATA</button>
       </div>
-    </div>
-    <div class="sound-row">
-      <span class="sound-label c-done">全セット完了</span>
-      <div class="sound-controls">
-        <select class="sound-select" id="snd-done">
-          <option value="beep">ビープ</option>
-          <option value="bell">ベル</option>
-          <option value="buzzer">ブザー</option>
-          <option value="blip">ブリップ</option>
-          <option value="fanfare" selected>ファンファーレ</option>
-          <option value="none">なし</option>
-        </select>
-        <button class="btn-test" onclick="testSound('snd-done')">TEST</button>
+
+      <div class="summary">
+        <div class="summary-card panel"><div class="label">WORK</div><div id="workNum" class="value">20</div><div class="unit">秒</div></div>
+        <div class="summary-card panel"><div class="label">REST</div><div id="restNum" class="value">40</div><div class="unit">秒</div></div>
+        <div class="summary-card panel"><div class="label">SET</div><div id="setsNum" class="value">8</div><div class="unit" id="totalTime">8分</div></div>
       </div>
+
+      <div class="guide-card panel">
+        <div class="guide-head"><strong>フォーム確認</strong><span>画像タップで拡大</span></div>
+        <div class="guide-image-wrap">
+          <img id="guideImage" class="guide-image" src="" alt="トレーニングのやり方" />
+        </div>
+        <div class="guide-note" id="guideNote">選択した種目のやり方を確認できます</div>
+      </div>
+
+      <button id="startBtn" class="start-btn">START</button>
+
+      <div class="sound panel">
+        <div class="sound-title"><span style="color:var(--red);font-size:22px;">▻</span>サウンド設定</div>
+        <div class="sound-grid">
+          <div class="sound-block">
+            <div class="sound-icon">♙</div>
+            <div class="sound-label">トレーニング終了</div>
+            <select id="workSound"><option value="beep">ビープ</option><option value="bell">ベル</option><option value="buzzer">ブザー</option><option value="blip">ブリップ</option><option value="none">なし</option></select>
+          </div>
+          <div class="sound-block">
+            <div class="sound-icon">♜</div>
+            <div class="sound-label">休憩終了</div>
+            <select id="restSound"><option value="beep">ビープ</option><option value="bell" selected>ベル</option><option value="buzzer">ブザー</option><option value="blip">ブリップ</option><option value="none">なし</option></select>
+          </div>
+          <div class="sound-block">
+            <div class="sound-icon">♕</div>
+            <div class="sound-label">全セット完了</div>
+            <select id="completeSound"><option value="fanfare" selected>ファンファーレ</option><option value="bell">ベル</option><option value="beep">ビープ</option><option value="none">なし</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">act creation.com</div>
+    </section>
+
+    <section id="runScreen" class="run-screen hidden">
+      <div id="runExercise" class="run-exercise">BURPEE</div>
+      <div id="phaseLabel" class="phase work">WORK</div>
+      <div class="ring-wrap">
+        <svg viewBox="0 0 220 220" aria-hidden="true">
+          <circle class="track" cx="110" cy="110" r="92" fill="none" stroke-width="18" />
+          <circle id="progressCircle" class="progress" cx="110" cy="110" r="92" fill="none" stroke-width="18" />
+        </svg>
+        <div id="timeBig" class="time-big work-color">20</div>
+      </div>
+      <div class="set-read">SET <strong id="currentSetText">1</strong>/ <span id="totalSetText">8</span></div>
+      <div id="toast" class="toast">残り3秒<br>まもなく終了します</div>
+      <div id="runActions" class="run-actions">
+        <button id="pauseBtn" class="pause-active">PAUSE</button>
+        <button id="stopBtn">STOP</button>
+      </div>
+      <div class="footer">act creation.com</div>
+    </section>
+  </main>
+
+  <div id="imageModal" class="modal" aria-hidden="true">
+    <div class="modal-inner">
+      <button id="modalClose" class="modal-close" aria-label="閉じる">×</button>
+      <img id="modalImage" src="" alt="拡大画像" />
     </div>
   </div>
 
-  <button class="btn-start" onclick="startTimer()">START</button>
-</div>
-
-<!-- TIMER -->
-<div id="timer">
-  <div class="timer-menu-name" id="timer-menu-name"></div>
-  <div class="phase-banner work" id="phase-banner">WORK</div>
-  <div class="ring-wrap">
-    <svg class="ring-svg" viewBox="0 0 120 120">
-      <circle class="ring-track" cx="60" cy="60" r="52"/>
-      <circle class="ring-prog" id="ring" cx="60" cy="60" r="52"/>
-    </svg>
-    <div class="ring-center">
-      <div class="time-num work" id="time-num">20</div>
+  <div id="completeModal" class="modal" aria-hidden="true">
+    <div class="complete-box">
+      <h2>COMPLETE</h2>
+      <p>全セット完了。<br>お疲れさま。</p>
+      <button id="completeOk">OK</button>
     </div>
   </div>
-  <div class="sets-row">
-    <span class="sets-label">SET&nbsp;</span>
-    <span class="sets-count" id="sets-count">4</span>
-    <span class="sets-total" id="sets-total">&nbsp;/ 4</span>
-  </div>
-  <div class="controls">
-    <button class="btn primary" id="btn-pp" onclick="togglePause()">PAUSE</button>
-    <button class="btn" onclick="stopTimer()">STOP</button>
-  </div>
-</div>
 
-<!-- DONE -->
-<div id="done">
-  <div class="done-text">DONE!</div>
-  <div class="done-sub" id="done-sub"></div>
-  <button class="btn-again" onclick="goSetup()">もう一度</button>
-</div>
+  <script>
+    // 画像フォルダ：GitHubの「画像」フォルダを使用
+    const imageBase = "画像/";
 
-<script>
-// ── プリセット定義 ──
-// low / normal / high それぞれ { work, rest, sets }
-const PRESETS = {
-  custom:   { name: '',                    low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
-  burpee:   { name:'バーピー',              low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
-  mountain: { name:'マウンテンクライマー',   low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
-  highknee: { name:'ハイニー',              low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
-  shoulder: { name:'ショルダータッププランク',low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
-  lunge:    { name:'ジャンピングランジ',     low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
-  squat:    { name:'ジャンプスクワット',     low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
-  plank:    { name:'プランク',              low:{work:20,rest:15,sets:3}, normal:{work:30,rest:10,sets:4}, high:{work:40,rest:8,sets:5} },
-};
+    const exercises = {
+      "バーピー":           { image: "burpee.png",            presets: { low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+      "マウンテンクライマー":{ image: "mountain-climber.png",  presets: { low:{work:20,rest:40,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+      "ハイニー":           { image: "high-knees.png",         presets: { low:{work:20,rest:40,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+      "ショルダータッププランク":{ image: "shoulder-tap-plank.png", presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+      "ジャンピングランジ":  { image: "jumping-lunge.png",     presets: { low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+      "ジャンプスクワット":  { image: "jump-squat.png",        presets: { low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+      "プランク":           { image: "plank.png",              presets: { low:{work:30,rest:30,sets:4}, normal:{work:40,rest:20,sets:5}, high:{work:45,rest:15,sets:6}, advanced:{work:60,rest:10,sets:4} } },
+      "バイシクルクランチ":  { image: "bicycle-crunch.png",    presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+      "レッグレイズ":       { image: "leg-raise.png",          presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+      "プッシュアップ":     { image: "push-up.png",            presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+      "スクワットホールド": { image: "squat-hold.png",         presets: { low:{work:30,rest:30,sets:4}, normal:{work:40,rest:20,sets:5}, high:{work:45,rest:15,sets:6}, advanced:{work:60,rest:10,sets:4} } },
+      "ヒップリフト":       { image: "hip-lift.png",           presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+      "プランクアップダウン":{ image: "plank-up-down.png",     presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } }
+    };
 
-let currentLoad = 'normal';
+    const state = {
+      exercise: "バーピー",
+      level: "normal",
+      work: 20, rest: 40, sets: 8,
+      phase: "work",
+      currentSet: 1,
+      remaining: 20,
+      duration: 20,
+      running: false,
+      timer: null,
+      audioCtx: null
+    };
 
-function setLoad(level) {
-  currentLoad = level;
-  ['low','normal','high'].forEach(l => {
-    document.getElementById('load-' + l).classList.toggle('active', l === level);
-  });
-  applyMenu();
-}
+    const $ = id => document.getElementById(id);
+    const circumference = 2 * Math.PI * 92;
+    const progress = $("progressCircle");
+    progress.style.strokeDasharray = circumference;
+    progress.style.strokeDashoffset = 0;
 
-function applyMenu() {
-  const key = document.getElementById('menu-select').value;
-  const preset = PRESETS[key][currentLoad];
-  document.getElementById('inp-work').value = preset.work;
-  document.getElementById('inp-rest').value = preset.rest;
-  document.getElementById('inp-sets').value = preset.sets;
-}
+    Object.keys(exercises).forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      $("exerciseSelect").appendChild(option);
+    });
 
-// 初期適用
-applyMenu();
-
-// ── Audio ──
-let ac;
-function getAC() {
-  if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
-  return ac;
-}
-function unlockAudio() {
-  const a = getAC();
-  if (a.state === 'suspended') a.resume();
-  const buf = a.createBuffer(1, 1, 22050);
-  const src = a.createBufferSource();
-  src.buffer = buf; src.connect(a.destination); src.start(0);
-}
-function osc(a, type, freq, start, dur, vol) {
-  const o = a.createOscillator();
-  const g = a.createGain();
-  o.connect(g); g.connect(a.destination);
-  o.type = type; o.frequency.value = freq;
-  g.gain.setValueAtTime(vol, start);
-  g.gain.exponentialRampToValueAtTime(0.001, start + dur);
-  o.start(start); o.stop(start + dur);
-}
-function playBlip(a, t) {
-  const o = a.createOscillator(), g = a.createGain();
-  o.connect(g); g.connect(a.destination); o.type = 'sine';
-  o.frequency.setValueAtTime(440, t);
-  o.frequency.exponentialRampToValueAtTime(880, t + 0.1);
-  g.gain.setValueAtTime(0.5, t);
-  g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-  o.start(t); o.stop(t + 0.15);
-}
-function playSound(type) {
-  if (type === 'none') return;
-  try {
-    const a = getAC();
-    if (a.state === 'suspended') a.resume();
-    const t = a.currentTime;
-    if      (type === 'beep')    { osc(a,'square',880,t,0.12,0.4); osc(a,'square',880,t+0.18,0.12,0.4); }
-    else if (type === 'bell')    { osc(a,'sine',1318,t,0.9,0.5); osc(a,'sine',1760,t,0.6,0.2); }
-    else if (type === 'buzzer')  { osc(a,'sawtooth',160,t,0.5,0.5); }
-    else if (type === 'blip')    { playBlip(a, t); }
-    else if (type === 'fanfare') { [523,659,784,1047].forEach((f,i)=>osc(a,'square',f,t+i*0.13,0.18,0.35)); }
-  } catch(e) {}
-}
-function testSound(id) { playSound(document.getElementById(id).value); }
-
-// ── Timer State ──
-let workSec, restSec, totalSets;
-let remaining, currentSets, isWork;
-let paused = false, raf, lastTick;
-let sndWork, sndRest, sndDone;
-let currentMenuName = '';
-const CIRCUM = 2 * Math.PI * 52;
-
-function startTimer() {
-  unlockAudio();
-  workSec   = Math.max(1, parseInt(document.getElementById('inp-work').value) || 20);
-  restSec   = Math.max(1, parseInt(document.getElementById('inp-rest').value) || 10);
-  totalSets = Math.max(1, parseInt(document.getElementById('inp-sets').value) || 4);
-  sndWork   = document.getElementById('snd-work').value;
-  sndRest   = document.getElementById('snd-rest').value;
-  sndDone   = document.getElementById('snd-done').value;
-
-  const key = document.getElementById('menu-select').value;
-  currentMenuName = PRESETS[key].name;
-
-  currentSets = totalSets;
-  isWork      = true;
-  remaining   = workSec;
-  paused      = false;
-
-  document.getElementById('timer-menu-name').textContent = currentMenuName;
-  show('timer');
-  document.getElementById('sets-total').textContent = ' / ' + totalSets;
-  updateDisplay();
-  lastTick = performance.now();
-  raf = requestAnimationFrame(tick);
-}
-
-function tick(now) {
-  if (paused) return;
-  const delta = (now - lastTick) / 1000;
-  lastTick = now;
-  remaining -= delta;
-  if (remaining <= 0) {
-    if (isWork) {
-      playSound(sndWork);
-      isWork    = false;
-      remaining = restSec;
-    } else {
-      currentSets--;
-      if (currentSets <= 0) {
-        playSound(sndDone);
-        endTimer();
-        return;
-      }
-      playSound(sndRest);
-      isWork    = true;
-      remaining = workSec;
+    function formatTotal(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = seconds % 60;
+      return sec === 0 ? `${min}分` : `${min}分${sec}秒`;
     }
-  }
-  updateDisplay();
-  raf = requestAnimationFrame(tick);
-}
 
-function updateDisplay() {
-  const phase    = isWork ? 'work' : 'rest';
-  const phaseSec = isWork ? workSec : restSec;
-  const secs     = Math.ceil(Math.max(0, remaining));
-  const offset   = CIRCUM * (1 - Math.max(0, Math.min(1, remaining / phaseSec)));
+    function calcTotalSeconds(preset) {
+      return (preset.work + preset.rest) * preset.sets;
+    }
 
-  const ring   = document.getElementById('ring');
-  const timeEl = document.getElementById('time-num');
-  const banner = document.getElementById('phase-banner');
+    function currentPreset() {
+      return exercises[state.exercise].presets[state.level];
+    }
 
-  ring.style.strokeDasharray  = CIRCUM;
-  ring.style.strokeDashoffset = offset;
-  ring.style.stroke = isWork ? 'var(--work)' : 'var(--rest)';
-  timeEl.textContent = secs;
-  timeEl.className   = 'time-num ' + phase;
-  banner.textContent = isWork ? 'WORK' : 'REST';
-  banner.className   = 'phase-banner ' + phase;
-  document.getElementById('sets-count').textContent = currentSets;
-}
+    function applyPreset() {
+      const p = currentPreset();
+      state.work = p.work; state.rest = p.rest; state.sets = p.sets;
+      state.remaining = p.work; state.duration = p.work;
+      updateSettingsView();
+    }
 
-function togglePause() {
-  paused = !paused;
-  document.getElementById('btn-pp').textContent = paused ? 'RESUME' : 'PAUSE';
-  if (!paused) { lastTick = performance.now(); raf = requestAnimationFrame(tick); }
-}
+    function updateSettingsView() {
+      const p = currentPreset();
+      $("exerciseSelect").value = state.exercise;
+      $("workNum").textContent = p.work;
+      $("restNum").textContent = p.rest;
+      $("setsNum").textContent = p.sets;
+      $("totalTime").textContent = formatTotal(calcTotalSeconds(p));
+      document.querySelectorAll("#levelButtons button").forEach(btn =>
+        btn.classList.toggle("active", btn.dataset.level === state.level)
+      );
+      const filename = exercises[state.exercise].image;
+      const img = $("guideImage");
+      img.src = imageBase + filename;
+      img.alt = `${state.exercise}のやり方`;
+      $("guideNote").textContent = `${state.exercise}のフォームを確認`;
+    }
 
-function stopTimer()  { cancelAnimationFrame(raf); goSetup(); }
-function goSetup()    { show('setup'); }
+    function initAudio() {
+      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (state.audioCtx.state === "suspended") state.audioCtx.resume();
+    }
 
-function endTimer() {
-  cancelAnimationFrame(raf);
-  const loadLabel = { low:'低負荷', normal:'通常', high:'高負荷' }[currentLoad];
-  document.getElementById('done-sub').textContent =
-    (currentMenuName || '通常タイマー') + '\n' +
-    workSec + 's WORK  ·  ' + restSec + 's REST  ·  ' + totalSets + ' SETS\n' +
-    loadLabel;
-  show('done');
-}
+    function tone(freq, duration, type = "sine", delay = 0, gainValue = 0.08) {
+      if (!state.audioCtx) return;
+      const ctx = state.audioCtx;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+      gain.gain.exponentialRampToValueAtTime(gainValue, ctx.currentTime + delay + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + duration + 0.02);
+    }
 
-function show(id) {
-  ['setup','timer','done'].forEach(s => {
-    document.getElementById(s).style.display = (s === id) ? 'flex' : 'none';
-  });
-}
-</script>
+    function playSound(name) {
+      if (name === "none") return;
+      initAudio();
+      if (navigator.vibrate) navigator.vibrate(70);
+      if (name === "beep")    tone(880, .16, "sine");
+      if (name === "bell")    { tone(660, .18, "sine"); tone(990, .22, "sine", .16); }
+      if (name === "buzzer")  tone(180, .35, "sawtooth", 0, .06);
+      if (name === "blip")    { tone(520, .08, "square"); tone(740, .08, "square", .1); }
+      if (name === "fanfare") { tone(523, .14, "sine"); tone(659, .14, "sine", .16); tone(784, .28, "sine", .32); }
+    }
+
+    function switchToRun() {
+      initAudio();
+      const p = currentPreset();
+      state.work = p.work; state.rest = p.rest; state.sets = p.sets;
+      state.currentSet = 1; state.phase = "work";
+      state.duration = state.work; state.remaining = state.work;
+      $("settingsScreen").classList.add("hidden");
+      $("runScreen").classList.remove("hidden");
+      $("runExercise").textContent = state.exercise;
+      updateRunView();
+      startTimer();
+    }
+
+    function switchToSettings() {
+      clearInterval(state.timer);
+      state.timer = null; state.running = false;
+      $("runScreen").classList.add("hidden");
+      $("settingsScreen").classList.remove("hidden");
+      $("completeModal").classList.remove("show");
+      applyPreset();
+    }
+
+    function startTimer() {
+      if (state.running) return;
+      state.running = true;
+      state.timer = setInterval(tick, 1000);
+      $("pauseBtn").textContent = "PAUSE";
+    }
+
+    function pauseTimer() {
+      if (state.running) {
+        clearInterval(state.timer); state.timer = null; state.running = false;
+        $("pauseBtn").textContent = "START";
+      } else {
+        startTimer();
+      }
+    }
+
+    function finishAll() {
+      clearInterval(state.timer); state.timer = null; state.running = false;
+      playSound($("completeSound").value);
+      $("completeModal").classList.add("show");
+    }
+
+    function nextPhase() {
+      if (state.phase === "work") {
+        if (state.currentSet >= state.sets) { finishAll(); return; }
+        playSound($("workSound").value);
+        state.phase = "rest"; state.duration = state.rest; state.remaining = state.rest;
+      } else {
+        playSound($("restSound").value);
+        state.currentSet += 1;
+        state.phase = "work"; state.duration = state.work; state.remaining = state.work;
+      }
+      updateRunView();
+    }
+
+    function tick() {
+      if (state.remaining > 0) {
+        state.remaining -= 1;
+        updateRunView();
+        if (state.remaining === 0) nextPhase();
+      }
+    }
+
+    function updateRunView() {
+      const isWork = state.phase === "work";
+      const color = isWork
+        ? getComputedStyle(document.documentElement).getPropertyValue('--red').trim()
+        : getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
+      const glow = isWork
+        ? "drop-shadow(0 0 11px rgba(240,6,18,.62))"
+        : "drop-shadow(0 0 11px rgba(142,212,255,.55))";
+      const ratio = state.duration ? state.remaining / state.duration : 0;
+      progress.style.strokeDashoffset = circumference * (1 - ratio);
+      progress.style.stroke = color;
+      progress.style.filter = glow;
+      $("phaseLabel").textContent = isWork ? "WORK" : "REST";
+      $("phaseLabel").className = "phase " + (isWork ? "work" : "rest");
+      $("timeBig").textContent = state.remaining;
+      $("timeBig").className = "time-big " + (isWork ? "work-color" : "rest-color") +
+        (state.remaining <= 3 && state.remaining > 0 ? " blink" : "");
+      $("currentSetText").textContent = state.currentSet;
+      $("totalSetText").textContent = state.sets;
+      $("runActions").className = "run-actions" + (isWork ? "" : " resting");
+      $("toast").classList.toggle("show", state.remaining <= 3 && state.remaining > 0);
+    }
+
+    document.querySelectorAll("#levelButtons button").forEach(btn => {
+      btn.addEventListener("click", () => { state.level = btn.dataset.level; applyPreset(); });
+    });
+
+    $("exerciseSelect").addEventListener("change", e => { state.exercise = e.target.value; applyPreset(); });
+    $("startBtn").addEventListener("click", switchToRun);
+    $("pauseBtn").addEventListener("click", pauseTimer);
+    $("stopBtn").addEventListener("click", switchToSettings);
+    $("completeOk").addEventListener("click", switchToSettings);
+
+    $("guideImage").addEventListener("click", () => {
+      $("modalImage").src = $("guideImage").src;
+      $("imageModal").classList.add("show");
+    });
+    $("modalClose").addEventListener("click", () => $("imageModal").classList.remove("show"));
+    $("imageModal").addEventListener("click", e => {
+      if (e.target.id === "imageModal") $("imageModal").classList.remove("show");
+    });
+
+    applyPreset();
+  </script>
 </body>
 </html>
