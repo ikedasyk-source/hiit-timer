@@ -8,75 +8,131 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="HIIT">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;700;900&family=Share+Tech+Mono&display=swap">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;700;900&family=Share+Tech+Mono&display=swap');
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0a0a0a;
-  --surface: #141414;
   --work: #e8000a;
   --rest: #aaa;
   --done: #39ff14;
   --text: #f0f0f0;
   --muted: #555;
-  --dim: #222;
+  --dim: #1e1e1e;
+  --surface: #181818;
 }
 
-html, body { height: 100%; overflow: hidden; }
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #0c0c0c;
+}
 
 body {
-  background: var(--bg);
   color: var(--text);
-  font-family: 'Barlow Condensed', sans-serif;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
+  font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
 }
 
+/* ── カーボン柄 ── */
 body::before {
   content: '';
   position: fixed; inset: 0;
-  background-color: #0f0f0f;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #0c0c0c;
   background-image:
-    repeating-linear-gradient(45deg,  rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 4px),
-    repeating-linear-gradient(-45deg, rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 4px),
-    repeating-linear-gradient(0deg,   rgba(0,0,0,0.55) 0px, rgba(0,0,0,0.55) 1px, transparent 1px, transparent 8px),
-    repeating-linear-gradient(90deg,  rgba(0,0,0,0.55) 0px, rgba(0,0,0,0.55) 1px, transparent 1px, transparent 8px),
-    radial-gradient(ellipse at 25% 15%, rgba(90,90,90,0.2) 0%, transparent 55%),
-    radial-gradient(ellipse at 75% 85%, rgba(30,30,30,0.4) 0%, transparent 55%);
+    repeating-linear-gradient(
+      135deg,
+      rgba(255,255,255,0.06) 0px,
+      rgba(255,255,255,0.06) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.06) 0px,
+      rgba(255,255,255,0.06) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      135deg,
+      rgba(0,0,0,0.7) 0px,
+      rgba(0,0,0,0.7) 4px,
+      transparent 4px,
+      transparent 8px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(0,0,0,0.7) 0px,
+      rgba(0,0,0,0.7) 4px,
+      transparent 4px,
+      transparent 8px
+    ),
+    radial-gradient(ellipse at 30% 20%, rgba(110,110,110,0.28) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(10,10,10,0.6) 0%, transparent 50%);
   background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%, 100% 100%;
+}
+
+body > * { position: relative; z-index: 1; }
+
+/* ── フッター ── */
+.footer {
+  position: fixed;
+  bottom: 18px;
+  left: 0; right: 0;
+  z-index: 100;
+  text-align: center;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 0.45em;
+  color: rgba(255,255,255,0.55);
+  text-transform: lowercase;
   pointer-events: none;
 }
 
 /* ======= SETUP ======= */
 #setup {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 20px;
-  width: 100%; padding: 20px 24px;
-  animation: fadeUp .35s ease;
-  overflow-y: auto; max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  padding: 20px 24px 60px;
+  overflow-y: auto;
+  max-height: 100vh;
 }
 
 .logo {
   font-size: clamp(46px, 12vw, 80px);
-  font-weight: 900; letter-spacing: .15em;
-  color: var(--work); line-height: 1;
+  font-weight: 900;
+  letter-spacing: .15em;
+  color: var(--work);
+  line-height: 1;
   text-shadow: 0 0 40px rgba(232,0,10,.4);
 }
 
 .setup-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; width: min(360px, 92vw);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: min(360px, 92vw);
 }
 
 .field { display: flex; flex-direction: column; gap: 5px; }
 .field.full { grid-column: 1 / -1; }
 
 .field label {
-  font-size: 9px; letter-spacing: .35em;
-  color: var(--muted); text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: .35em;
+  color: var(--muted);
+  text-transform: uppercase;
   font-family: 'Share Tech Mono', monospace;
 }
 
@@ -85,17 +141,21 @@ body::before {
   border: 1px solid var(--dim);
   border-bottom: 2px solid var(--muted);
   color: var(--text);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 38px; font-weight: 700;
-  text-align: center; padding: 8px 4px; width: 100%;
-  outline: none; -moz-appearance: textfield;
+  font-family: 'Barlow Condensed', Arial, sans-serif;
+  font-size: 38px;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px 4px;
+  width: 100%;
+  outline: none;
+  -moz-appearance: textfield;
   transition: border-color .2s;
 }
 .field input[type="number"]::-webkit-inner-spin-button,
 .field input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .field input[type="number"]:focus { border-bottom-color: var(--work); }
 
-/* Sound section */
+/* Sound */
 .sound-section {
   width: min(360px, 92vw);
   border: 1px solid var(--dim);
@@ -103,23 +163,23 @@ body::before {
 }
 
 .sound-title {
-  font-size: 9px; letter-spacing: .35em;
-  color: var(--muted); text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: .35em;
+  color: var(--muted);
+  text-transform: uppercase;
   font-family: 'Share Tech Mono', monospace;
   margin-bottom: 12px;
 }
 
 .sound-row {
-  display: flex; align-items: center;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
 }
 .sound-row:last-child { margin-bottom: 0; }
 
-.sound-label {
-  font-size: 13px; letter-spacing: .08em;
-  color: var(--rest); flex: 1;
-}
+.sound-label { font-size: 13px; letter-spacing: .08em; color: var(--rest); flex: 1; }
 .sound-label.c-work { color: var(--work); }
 .sound-label.c-done { color: var(--done); }
 
@@ -130,10 +190,14 @@ body::before {
   border: 1px solid var(--dim);
   color: var(--text);
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; padding: 5px 8px;
-  outline: none; cursor: pointer;
-  appearance: none; -webkit-appearance: none;
-  min-width: 100px; text-align: center;
+  font-size: 11px;
+  padding: 5px 8px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 100px;
+  text-align: center;
 }
 
 .btn-test {
@@ -141,39 +205,46 @@ body::before {
   border: 1px solid var(--dim);
   color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px; padding: 5px 8px;
-  cursor: pointer; letter-spacing: .05em;
+  font-size: 10px;
+  padding: 5px 8px;
+  cursor: pointer;
   transition: all .15s;
 }
-.btn-test:hover { border-color: var(--text); color: var(--text); }
 .btn-test:active { opacity: .6; }
 
 .btn-start {
-  width: min(360px, 92vw); padding: 15px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 24px; font-weight: 900;
+  width: min(360px, 92vw);
+  padding: 15px;
+  font-family: 'Barlow Condensed', Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 900;
   letter-spacing: .25em;
-  background: var(--work); color: #fff;
-  border: none; cursor: pointer; text-transform: uppercase;
-  transition: opacity .15s;
+  background: var(--work);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
 }
 .btn-start:active { opacity: .8; }
 
 /* ======= TIMER ======= */
 #timer {
-  display: none; flex-direction: column;
+  display: none;
+  flex-direction: column;
   align-items: center;
-  width: 100%; padding: 16px 24px 24px;
-  animation: fadeUp .3s ease;
+  width: 100%;
+  padding: 16px 24px 60px;
 }
 
 .phase-banner {
   font-size: clamp(12px, 3.2vw, 15px);
-  font-weight: 300; letter-spacing: .5em;
+  font-weight: 300;
+  letter-spacing: .5em;
   color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
   text-transform: uppercase;
-  margin-bottom: 8px; height: 20px;
+  margin-bottom: 8px;
+  height: 20px;
   transition: color .4s;
 }
 .phase-banner.work { color: var(--work); }
@@ -189,8 +260,10 @@ body::before {
 .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .ring-track { fill: none; stroke: #1a1a1a; stroke-width: 10; }
 .ring-prog {
-  fill: none; stroke: var(--work);
-  stroke-width: 10; stroke-linecap: round;
+  fill: none;
+  stroke: var(--work);
+  stroke-width: 10;
+  stroke-linecap: round;
   transition: stroke-dashoffset .1s linear, stroke .4s;
 }
 
@@ -201,8 +274,10 @@ body::before {
 
 .time-num {
   font-size: clamp(72px, 18vw, 110px);
-  font-weight: 900; line-height: 1;
-  color: var(--text); font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
   transition: color .4s;
 }
 .time-num.work { color: var(--work); text-shadow: 0 0 28px rgba(232,0,10,.35); }
@@ -213,8 +288,7 @@ body::before {
   margin-bottom: 18px;
 }
 .sets-label {
-  font-size: 11px; letter-spacing: .4em;
-  color: var(--muted);
+  font-size: 11px; letter-spacing: .4em; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
 }
 .sets-count {
@@ -228,21 +302,23 @@ body::before {
 .controls { display: flex; gap: 10px; }
 
 .btn {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Barlow Condensed', Arial, sans-serif;
   font-size: 16px; font-weight: 700; letter-spacing: .2em;
   border: 1px solid var(--dim);
   background: transparent; color: var(--muted);
   padding: 11px 22px; cursor: pointer;
-  text-transform: uppercase; transition: all .15s;
+  text-transform: uppercase;
 }
 .btn:active { opacity: .7; }
 .btn.primary { border-color: var(--work); color: var(--work); }
 
 /* ======= DONE ======= */
 #done {
-  display: none; flex-direction: column;
-  align-items: center; gap: 18px;
-  animation: fadeUp .4s ease;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 60px;
 }
 
 .done-text {
@@ -253,51 +329,30 @@ body::before {
   animation: glow 1.4s ease-in-out infinite;
 }
 .done-sub {
-  font-size: 12px; letter-spacing: .3em;
-  color: var(--muted);
+  font-size: 12px; letter-spacing: .3em; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
 }
 .btn-again {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 21px; font-weight: 900;
-  letter-spacing: .2em;
+  font-family: 'Barlow Condensed', Arial, sans-serif;
+  font-size: 21px; font-weight: 900; letter-spacing: .2em;
   background: var(--done); color: #000;
-  border: none; padding: 13px 38px;
-  cursor: pointer; transition: opacity .15s;
+  border: none; padding: 13px 38px; cursor: pointer;
 }
 .btn-again:active { opacity: .8; }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 @keyframes glow {
   0%, 100% { opacity: 1; }
   50% { opacity: .5; }
-}
-
-/* ── Footer ── */
-.footer {
-  position: fixed;
-  bottom: 16px;
-  left: 0; right: 0;
-  text-align: center;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.45em;
-  color: rgba(255,255,255,0.2);
-  text-transform: lowercase;
-  pointer-events: none;
-  z-index: 10;
 }
 </style>
 </head>
 <body>
 
+<div class="footer">act creation.com</div>
+
 <!-- SETUP -->
 <div id="setup">
   <div class="logo">HIIT</div>
-
   <div class="setup-grid">
     <div class="field">
       <label>トレーニング（秒）</label>
@@ -315,7 +370,6 @@ body::before {
 
   <div class="sound-section">
     <div class="sound-title">🔊 &nbsp;サウンド設定</div>
-
     <div class="sound-row">
       <span class="sound-label c-work">トレーニング終了</span>
       <div class="sound-controls">
@@ -329,7 +383,6 @@ body::before {
         <button class="btn-test" onclick="testSound('snd-work')">TEST</button>
       </div>
     </div>
-
     <div class="sound-row">
       <span class="sound-label">休憩終了</span>
       <div class="sound-controls">
@@ -343,7 +396,6 @@ body::before {
         <button class="btn-test" onclick="testSound('snd-rest')">TEST</button>
       </div>
     </div>
-
     <div class="sound-row">
       <span class="sound-label c-done">全セット完了</span>
       <div class="sound-controls">
@@ -394,50 +446,30 @@ body::before {
 </div>
 
 <script>
-// ─── AudioContext ───
+// ── Audio ──
 let ac;
 function getAC() {
   if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
   return ac;
 }
-
-// iOSのAudioContextロック解除：無音バッファを再生してunlockする
 function unlockAudio() {
   const a = getAC();
-  // suspendedなら resume する
   if (a.state === 'suspended') a.resume();
-  // 無音バッファを1つ再生してiOSのロックを解除
   const buf = a.createBuffer(1, 1, 22050);
   const src = a.createBufferSource();
   src.buffer = buf;
   src.connect(a.destination);
   src.start(0);
 }
-
-function makeOsc(a, type, freq, start, dur, vol) {
+function osc(a, type, freq, start, dur, vol) {
   const o = a.createOscillator();
   const g = a.createGain();
   o.connect(g); g.connect(a.destination);
-  o.type = type;
-  o.frequency.value = freq;
+  o.type = type; o.frequency.value = freq;
   g.gain.setValueAtTime(vol, start);
   g.gain.exponentialRampToValueAtTime(0.001, start + dur);
   o.start(start); o.stop(start + dur);
 }
-
-function playSound(type) {
-  if (type === 'none') return;
-  try {
-    const a = getAC();
-    const t = a.currentTime;
-    if      (type === 'beep')    { makeOsc(a,'square', 880, t, 0.12, 0.4); makeOsc(a,'square', 880, t+0.18, 0.12, 0.4); }
-    else if (type === 'bell')    { makeOsc(a,'sine', 1318, t, 0.9, 0.5); makeOsc(a,'sine', 1760, t, 0.6, 0.2); }
-    else if (type === 'buzzer')  { makeOsc(a,'sawtooth', 160, t, 0.5, 0.5); }
-    else if (type === 'blip')    { playBlip(a, t); }
-    else if (type === 'fanfare') { [523,659,784,1047].forEach((f,i) => makeOsc(a,'square',f,t+i*0.13,0.18,0.35)); }
-  } catch(e) {}
-}
-
 function playBlip(a, t) {
   const o = a.createOscillator();
   const g = a.createGain();
@@ -449,25 +481,36 @@ function playBlip(a, t) {
   g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
   o.start(t); o.stop(t + 0.15);
 }
-
+function playSound(type) {
+  if (type === 'none') return;
+  try {
+    const a = getAC();
+    if (a.state === 'suspended') a.resume();
+    const t = a.currentTime;
+    if      (type === 'beep')    { osc(a,'square',880,t,0.12,0.4); osc(a,'square',880,t+0.18,0.12,0.4); }
+    else if (type === 'bell')    { osc(a,'sine',1318,t,0.9,0.5); osc(a,'sine',1760,t,0.6,0.2); }
+    else if (type === 'buzzer')  { osc(a,'sawtooth',160,t,0.5,0.5); }
+    else if (type === 'blip')    { playBlip(a, t); }
+    else if (type === 'fanfare') { [523,659,784,1047].forEach((f,i)=>osc(a,'square',f,t+i*0.13,0.18,0.35)); }
+  } catch(e) {}
+}
 function testSound(id) { playSound(document.getElementById(id).value); }
 
-// ─── State ───
+// ── State ──
 let workSec, restSec, totalSets;
 let remaining, currentSets, isWork;
 let paused = false, raf, lastTick;
 let sndWork, sndRest, sndDone;
-
 const CIRCUM = 2 * Math.PI * 52;
 
 function startTimer() {
   unlockAudio();
-  workSec    = Math.max(1, parseInt(document.getElementById('inp-work').value) || 40);
-  restSec    = Math.max(1, parseInt(document.getElementById('inp-rest').value) || 20);
-  totalSets  = Math.max(1, parseInt(document.getElementById('inp-sets').value) || 5);
-  sndWork    = document.getElementById('snd-work').value;
-  sndRest    = document.getElementById('snd-rest').value;
-  sndDone    = document.getElementById('snd-done').value;
+  workSec   = Math.max(1, parseInt(document.getElementById('inp-work').value) || 40);
+  restSec   = Math.max(1, parseInt(document.getElementById('inp-rest').value) || 20);
+  totalSets = Math.max(1, parseInt(document.getElementById('inp-sets').value) || 5);
+  sndWork   = document.getElementById('snd-work').value;
+  sndRest   = document.getElementById('snd-rest').value;
+  sndDone   = document.getElementById('snd-done').value;
 
   currentSets = totalSets;
   isWork      = true;
@@ -486,25 +529,23 @@ function tick(now) {
   const delta = (now - lastTick) / 1000;
   lastTick = now;
   remaining -= delta;
-
   if (remaining <= 0) {
     if (isWork) {
-      playSound(sndWork);   // トレーニング終了音
+      playSound(sndWork);
       isWork    = false;
       remaining = restSec;
     } else {
       currentSets--;
       if (currentSets <= 0) {
-        playSound(sndDone); // 全セット完了音
+        playSound(sndDone);
         endTimer();
         return;
       }
-      playSound(sndRest);   // 休憩終了音
+      playSound(sndRest);
       isWork    = true;
       remaining = workSec;
     }
   }
-
   updateDisplay();
   raf = requestAnimationFrame(tick);
 }
@@ -525,10 +566,8 @@ function updateDisplay() {
 
   timeEl.textContent = secs;
   timeEl.className   = 'time-num ' + phase;
-
   banner.textContent = isWork ? 'WORK' : 'REST';
   banner.className   = 'phase-banner ' + phase;
-
   document.getElementById('sets-count').textContent = currentSets;
 }
 
@@ -550,11 +589,10 @@ function endTimer() {
 
 function show(id) {
   ['setup','timer','done'].forEach(s => {
-    document.getElementById(s).style.display = (s === id) ? 'flex' : 'none';
+    const el = document.getElementById(s);
+    el.style.display = (s === id) ? 'flex' : 'none';
   });
 }
 </script>
-
-<div class="footer">act creation.com</div>
 </body>
 </html>
