@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>HIIT TIMER</title>
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="HIIT">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;700;900&family=Share+Tech+Mono&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --work: #e8000a;
+  --rest: #aaa;
+  --done: #39ff14;
+  --text: #f0f0f0;
+  --muted: #555;
+  --dim: #222;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0px, rgba(255,255,255,.018) 1px, transparent 1px, transparent 8px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.018) 0px, rgba(255,255,255,.018) 1px, transparent 1px, transparent 8px);
+  pointer-events: none;
+}
+
+/* ======= SETUP ======= */
+#setup {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+  width: 100%; padding: 20px 24px;
+  animation: fadeUp .35s ease;
+  overflow-y: auto; max-height: 100vh;
+}
+
+.logo {
+  font-size: clamp(46px, 12vw, 80px);
+  font-weight: 900; letter-spacing: .15em;
+  color: var(--work); line-height: 1;
+  text-shadow: 0 0 40px rgba(232,0,10,.4);
+}
+
+.setup-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; width: min(360px, 92vw);
+}
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field.full { grid-column: 1 / -1; }
+
+.field label {
+  font-size: 9px; letter-spacing: .35em;
+  color: var(--muted); text-transform: uppercase;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.field input[type="number"] {
+  background: var(--surface);
+  border: 1px solid var(--dim);
+  border-bottom: 2px solid var(--muted);
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 38px; font-weight: 700;
+  text-align: center; padding: 8px 4px; width: 100%;
+  outline: none; -moz-appearance: textfield;
+  transition: border-color .2s;
+}
+.field input[type="number"]::-webkit-inner-spin-button,
+.field input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+.field input[type="number"]:focus { border-bottom-color: var(--work); }
+
+/* Sound section */
+.sound-section {
+  width: min(360px, 92vw);
+  border: 1px solid var(--dim);
+  padding: 14px;
+}
+
+.sound-title {
+  font-size: 9px; letter-spacing: .35em;
+  color: var(--muted); text-transform: uppercase;
+  font-family: 'Share Tech Mono', monospace;
+  margin-bottom: 12px;
+}
+
+.sound-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.sound-row:last-child { margin-bottom: 0; }
+
+.sound-label {
+  font-size: 13px; letter-spacing: .08em;
+  color: var(--rest); flex: 1;
+}
+.sound-label.c-work { color: var(--work); }
+.sound-label.c-done { color: var(--done); }
+
+.sound-controls { display: flex; align-items: center; gap: 6px; }
+
+.sound-select {
+  background: var(--surface);
+  border: 1px solid var(--dim);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; padding: 5px 8px;
+  outline: none; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  min-width: 100px; text-align: center;
+}
+
+.btn-test {
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; padding: 5px 8px;
+  cursor: pointer; letter-spacing: .05em;
+  transition: all .15s;
+}
+.btn-test:hover { border-color: var(--text); color: var(--text); }
+.btn-test:active { opacity: .6; }
+
+.btn-start {
+  width: min(360px, 92vw); padding: 15px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px; font-weight: 900;
+  letter-spacing: .25em;
+  background: var(--work); color: #fff;
+  border: none; cursor: pointer; text-transform: uppercase;
+  transition: opacity .15s;
+}
+.btn-start:active { opacity: .8; }
+
+/* ======= TIMER ======= */
+#timer {
+  display: none; flex-direction: column;
+  align-items: center;
+  width: 100%; padding: 16px 24px 24px;
+  animation: fadeUp .3s ease;
+}
+
+.phase-banner {
+  font-size: clamp(12px, 3.2vw, 15px);
+  font-weight: 300; letter-spacing: .5em;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase;
+  margin-bottom: 8px; height: 20px;
+  transition: color .4s;
+}
+.phase-banner.work { color: var(--work); }
+.phase-banner.rest { color: var(--rest); }
+
+.ring-wrap {
+  position: relative;
+  width: clamp(220px, 56vw, 290px);
+  height: clamp(220px, 56vw, 290px);
+  margin-bottom: 10px;
+}
+
+.ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: #1a1a1a; stroke-width: 10; }
+.ring-prog {
+  fill: none; stroke: var(--work);
+  stroke-width: 10; stroke-linecap: round;
+  transition: stroke-dashoffset .1s linear, stroke .4s;
+}
+
+.ring-center {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.time-num {
+  font-size: clamp(72px, 18vw, 110px);
+  font-weight: 900; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums;
+  transition: color .4s;
+}
+.time-num.work { color: var(--work); text-shadow: 0 0 28px rgba(232,0,10,.35); }
+.time-num.rest { color: var(--rest); }
+
+.sets-row {
+  display: flex; align-items: baseline; gap: 5px;
+  margin-bottom: 18px;
+}
+.sets-label {
+  font-size: 11px; letter-spacing: .4em;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+}
+.sets-count {
+  font-size: clamp(38px, 9vw, 58px);
+  font-weight: 900; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums;
+  min-width: 2ch; text-align: center;
+}
+.sets-total { font-size: 16px; color: var(--muted); font-weight: 300; }
+
+.controls { display: flex; gap: 10px; }
+
+.btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px; font-weight: 700; letter-spacing: .2em;
+  border: 1px solid var(--dim);
+  background: transparent; color: var(--muted);
+  padding: 11px 22px; cursor: pointer;
+  text-transform: uppercase; transition: all .15s;
+}
+.btn:active { opacity: .7; }
+.btn.primary { border-color: var(--work); color: var(--work); }
+
+/* ======= DONE ======= */
+#done {
+  display: none; flex-direction: column;
+  align-items: center; gap: 18px;
+  animation: fadeUp .4s ease;
+}
+
+.done-text {
+  font-size: clamp(68px, 19vw, 116px);
+  font-weight: 900; color: var(--done);
+  letter-spacing: .1em;
+  text-shadow: 0 0 60px rgba(57,255,20,.4);
+  animation: glow 1.4s ease-in-out infinite;
+}
+.done-sub {
+  font-size: 12px; letter-spacing: .3em;
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+}
+.btn-again {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 21px; font-weight: 900;
+  letter-spacing: .2em;
+  background: var(--done); color: #000;
+  border: none; padding: 13px 38px;
+  cursor: pointer; transition: opacity .15s;
+}
+.btn-again:active { opacity: .8; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP -->
+<div id="setup">
+  <div class="logo">HIIT</div>
+
+  <div class="setup-grid">
+    <div class="field">
+      <label>トレーニング（秒）</label>
+      <input type="number" id="inp-work" value="40" min="1" max="999">
+    </div>
+    <div class="field">
+      <label>休憩（秒）</label>
+      <input type="number" id="inp-rest" value="20" min="1" max="999">
+    </div>
+    <div class="field full">
+      <label>セット数</label>
+      <input type="number" id="inp-sets" value="5" min="1" max="99">
+    </div>
+  </div>
+
+  <div class="sound-section">
+    <div class="sound-title">🔊 &nbsp;サウンド設定</div>
+
+    <div class="sound-row">
+      <span class="sound-label c-work">トレーニング終了</span>
+      <div class="sound-controls">
+        <select class="sound-select" id="snd-work">
+          <option value="beep" selected>ビープ</option>
+          <option value="bell">ベル</option>
+          <option value="buzzer">ブザー</option>
+          <option value="blip">ブリップ</option>
+          <option value="none">なし</option>
+        </select>
+        <button class="btn-test" onclick="testSound('snd-work')">TEST</button>
+      </div>
+    </div>
+
+    <div class="sound-row">
+      <span class="sound-label">休憩終了</span>
+      <div class="sound-controls">
+        <select class="sound-select" id="snd-rest">
+          <option value="beep">ビープ</option>
+          <option value="bell" selected>ベル</option>
+          <option value="buzzer">ブザー</option>
+          <option value="blip">ブリップ</option>
+          <option value="none">なし</option>
+        </select>
+        <button class="btn-test" onclick="testSound('snd-rest')">TEST</button>
+      </div>
+    </div>
+
+    <div class="sound-row">
+      <span class="sound-label c-done">全セット完了</span>
+      <div class="sound-controls">
+        <select class="sound-select" id="snd-done">
+          <option value="beep">ビープ</option>
+          <option value="bell">ベル</option>
+          <option value="buzzer">ブザー</option>
+          <option value="blip">ブリップ</option>
+          <option value="fanfare" selected>ファンファーレ</option>
+          <option value="none">なし</option>
+        </select>
+        <button class="btn-test" onclick="testSound('snd-done')">TEST</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-start" onclick="startTimer()">START</button>
+</div>
+
+<!-- TIMER -->
+<div id="timer">
+  <div class="phase-banner work" id="phase-banner">WORK</div>
+  <div class="ring-wrap">
+    <svg class="ring-svg" viewBox="0 0 120 120">
+      <circle class="ring-track" cx="60" cy="60" r="52"/>
+      <circle class="ring-prog" id="ring" cx="60" cy="60" r="52"/>
+    </svg>
+    <div class="ring-center">
+      <div class="time-num work" id="time-num">40</div>
+    </div>
+  </div>
+  <div class="sets-row">
+    <span class="sets-label">SET&nbsp;</span>
+    <span class="sets-count" id="sets-count">5</span>
+    <span class="sets-total" id="sets-total">&nbsp;/ 5</span>
+  </div>
+  <div class="controls">
+    <button class="btn primary" id="btn-pp" onclick="togglePause()">PAUSE</button>
+    <button class="btn" onclick="stopTimer()">STOP</button>
+  </div>
+</div>
+
+<!-- DONE -->
+<div id="done">
+  <div class="done-text">DONE!</div>
+  <div class="done-sub" id="done-sub"></div>
+  <button class="btn-again" onclick="goSetup()">もう一度</button>
+</div>
+
+<script>
+// ─── AudioContext ───
+let ac;
+function getAC() {
+  if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+  return ac;
+}
+
+function makeOsc(a, type, freq, start, dur, vol) {
+  const o = a.createOscillator();
+  const g = a.createGain();
+  o.connect(g); g.connect(a.destination);
+  o.type = type;
+  o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, start);
+  g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  o.start(start); o.stop(start + dur);
+}
+
+function playSound(type) {
+  if (type === 'none') return;
+  try {
+    const a = getAC();
+    const t = a.currentTime;
+    if      (type === 'beep')    { makeOsc(a,'square', 880, t, 0.12, 0.4); makeOsc(a,'square', 880, t+0.18, 0.12, 0.4); }
+    else if (type === 'bell')    { makeOsc(a,'sine', 1318, t, 0.9, 0.5); makeOsc(a,'sine', 1760, t, 0.6, 0.2); }
+    else if (type === 'buzzer')  { makeOsc(a,'sawtooth', 160, t, 0.5, 0.5); }
+    else if (type === 'blip')    { playBlip(a, t); }
+    else if (type === 'fanfare') { [523,659,784,1047].forEach((f,i) => makeOsc(a,'square',f,t+i*0.13,0.18,0.35)); }
+  } catch(e) {}
+}
+
+function playBlip(a, t) {
+  const o = a.createOscillator();
+  const g = a.createGain();
+  o.connect(g); g.connect(a.destination);
+  o.type = 'sine';
+  o.frequency.setValueAtTime(440, t);
+  o.frequency.exponentialRampToValueAtTime(880, t + 0.1);
+  g.gain.setValueAtTime(0.5, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+  o.start(t); o.stop(t + 0.15);
+}
+
+function testSound(id) { playSound(document.getElementById(id).value); }
+
+// ─── State ───
+let workSec, restSec, totalSets;
+let remaining, currentSets, isWork;
+let paused = false, raf, lastTick;
+let sndWork, sndRest, sndDone;
+
+const CIRCUM = 2 * Math.PI * 52;
+
+function startTimer() {
+  workSec    = Math.max(1, parseInt(document.getElementById('inp-work').value) || 40);
+  restSec    = Math.max(1, parseInt(document.getElementById('inp-rest').value) || 20);
+  totalSets  = Math.max(1, parseInt(document.getElementById('inp-sets').value) || 5);
+  sndWork    = document.getElementById('snd-work').value;
+  sndRest    = document.getElementById('snd-rest').value;
+  sndDone    = document.getElementById('snd-done').value;
+
+  currentSets = totalSets;
+  isWork      = true;
+  remaining   = workSec;
+  paused      = false;
+
+  show('timer');
+  document.getElementById('sets-total').textContent = ' / ' + totalSets;
+  updateDisplay();
+  lastTick = performance.now();
+  raf = requestAnimationFrame(tick);
+}
+
+function tick(now) {
+  if (paused) return;
+  const delta = (now - lastTick) / 1000;
+  lastTick = now;
+  remaining -= delta;
+
+  if (remaining <= 0) {
+    if (isWork) {
+      playSound(sndWork);   // トレーニング終了音
+      isWork    = false;
+      remaining = restSec;
+    } else {
+      currentSets--;
+      if (currentSets <= 0) {
+        playSound(sndDone); // 全セット完了音
+        endTimer();
+        return;
+      }
+      playSound(sndRest);   // 休憩終了音
+      isWork    = true;
+      remaining = workSec;
+    }
+  }
+
+  updateDisplay();
+  raf = requestAnimationFrame(tick);
+}
+
+function updateDisplay() {
+  const phase    = isWork ? 'work' : 'rest';
+  const phaseSec = isWork ? workSec : restSec;
+  const secs     = Math.ceil(Math.max(0, remaining));
+  const offset   = CIRCUM * (1 - Math.max(0, Math.min(1, remaining / phaseSec)));
+
+  const ring   = document.getElementById('ring');
+  const timeEl = document.getElementById('time-num');
+  const banner = document.getElementById('phase-banner');
+
+  ring.style.strokeDasharray  = CIRCUM;
+  ring.style.strokeDashoffset = offset;
+  ring.style.stroke = isWork ? 'var(--work)' : 'var(--rest)';
+
+  timeEl.textContent = secs;
+  timeEl.className   = 'time-num ' + phase;
+
+  banner.textContent = isWork ? 'WORK' : 'REST';
+  banner.className   = 'phase-banner ' + phase;
+
+  document.getElementById('sets-count').textContent = currentSets;
+}
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById('btn-pp').textContent = paused ? 'RESUME' : 'PAUSE';
+  if (!paused) { lastTick = performance.now(); raf = requestAnimationFrame(tick); }
+}
+
+function stopTimer()  { cancelAnimationFrame(raf); goSetup(); }
+function goSetup()    { show('setup'); }
+
+function endTimer() {
+  cancelAnimationFrame(raf);
+  document.getElementById('done-sub').textContent =
+    workSec + 's WORK  ·  ' + restSec + 's REST  ·  ' + totalSets + ' SETS';
+  show('done');
+}
+
+function show(id) {
+  ['setup','timer','done'].forEach(s => {
+    document.getElementById(s).style.display = (s === id) ? 'flex' : 'none';
+  });
+}
+</script>
+</body>
+</html>
