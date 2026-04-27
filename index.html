@@ -38,9 +38,15 @@ body {
 body::before {
   content: '';
   position: fixed; inset: 0;
+  background-color: #0f0f0f;
   background-image:
-    repeating-linear-gradient(45deg, rgba(255,255,255,.018) 0px, rgba(255,255,255,.018) 1px, transparent 1px, transparent 8px),
-    repeating-linear-gradient(-45deg, rgba(255,255,255,.018) 0px, rgba(255,255,255,.018) 1px, transparent 1px, transparent 8px);
+    repeating-linear-gradient(45deg,  rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(0deg,   rgba(0,0,0,0.55) 0px, rgba(0,0,0,0.55) 1px, transparent 1px, transparent 8px),
+    repeating-linear-gradient(90deg,  rgba(0,0,0,0.55) 0px, rgba(0,0,0,0.55) 1px, transparent 1px, transparent 8px),
+    radial-gradient(ellipse at 25% 15%, rgba(90,90,90,0.2) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 85%, rgba(30,30,30,0.4) 0%, transparent 55%);
+  background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%, 100% 100%;
   pointer-events: none;
 }
 
@@ -268,6 +274,21 @@ body::before {
 @keyframes glow {
   0%, 100% { opacity: 1; }
   50% { opacity: .5; }
+}
+
+/* ── Footer ── */
+.footer {
+  position: fixed;
+  bottom: 16px;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.45em;
+  color: rgba(255,255,255,0.2);
+  text-transform: lowercase;
+  pointer-events: none;
+  z-index: 10;
 }
 </style>
 </head>
@@ -533,5 +554,7 @@ function show(id) {
   });
 }
 </script>
+
+<div class="footer">act creation.com</div>
 </body>
 </html>
