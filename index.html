@@ -1,705 +1,727 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#050505" />
-  <title>ACT HIIT Timer</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0c0c0c"/>
+  <title>HIIT TIMER</title>
   <link rel="apple-touch-icon" href="icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="HIIT">
   <style>
     :root {
-      --bg: #050505;
-      --panel: rgba(14, 14, 14, 0.88);
-      --panel-2: rgba(24, 24, 24, 0.92);
-      --line: rgba(255, 255, 255, 0.12);
-      --text: #f4f4f4;
-      --muted: rgba(255,255,255,0.48);
-      --red: #f00612;
-      --red-soft: rgba(240, 6, 18, 0.55);
-      --blue: #8ed4ff;
-      --blue-soft: rgba(142, 212, 255, 0.58);
-      --dark-ring: rgba(255,255,255,0.08);
-      --radius: 16px;
+      --work: #e8000a;
+      --rest: #8ed4ff;
+      --done: #39ff14;
+      --text: #f0f0f0;
+      --muted: rgba(255,255,255,0.45);
+      --line: rgba(255,255,255,0.1);
+      --surface: rgba(20,20,20,0.92);
+      --surface2: rgba(14,14,14,0.88);
+      --radius: 14px;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body { margin: 0; min-height: 100%; }
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
 
     body {
       min-height: 100vh;
       min-height: 100svh;
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", sans-serif;
-      background:
-        linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.86)),
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
+      background-color: #0c0c0c;
+      background-image:
         repeating-linear-gradient(135deg, rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 1px, transparent 1px, transparent 4px),
         repeating-linear-gradient(45deg,  rgba(255,255,255,.06) 0px, rgba(255,255,255,.06) 1px, transparent 1px, transparent 4px),
         repeating-linear-gradient(135deg, rgba(0,0,0,.7) 0px, rgba(0,0,0,.7) 4px, transparent 4px, transparent 8px),
         repeating-linear-gradient(45deg,  rgba(0,0,0,.7) 0px, rgba(0,0,0,.7) 4px, transparent 4px, transparent 8px),
-        radial-gradient(circle at 50% 0%, rgba(255,0,0,.11), transparent 36%),
-        #070707;
+        radial-gradient(ellipse at 30% 20%, rgba(110,110,110,.28) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(10,10,10,.6) 0%, transparent 50%);
       background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%, 100% 100%;
       overflow-x: hidden;
     }
 
-    button, select { font: inherit; }
-    button { cursor: pointer; user-select: none; }
-    button:active { transform: scale(.985); }
+    button, select { font: inherit; cursor: pointer; }
+    button { user-select: none; }
+    button:active { transform: scale(.97); }
 
     .app {
-      width: min(430px, 100%);
-      min-height: 100vh;
-      min-height: 100svh;
+      width: min(440px, 100%);
       margin: 0 auto;
-      padding: max(22px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+      padding: max(20px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
+      min-height: 100svh;
     }
 
     .hidden { display: none !important; }
 
+    /* ── LOGO ── */
     .logo {
-      margin: 22px 0 22px;
       text-align: center;
-      font-size: clamp(48px, 13vw, 68px);
-      font-weight: 950;
-      letter-spacing: .28em;
-      color: var(--red);
-      text-shadow: 0 0 18px rgba(240,6,18,.58), 0 0 42px rgba(240,6,18,.22);
-      transform: translateX(.14em);
+      font-size: clamp(52px, 14vw, 72px);
+      font-weight: 900;
+      letter-spacing: .2em;
+      color: var(--work);
+      text-shadow: 0 0 24px rgba(232,0,10,.5), 0 0 48px rgba(232,0,10,.2);
       line-height: 1;
+      margin-bottom: 20px;
     }
 
+    /* ── PANEL ── */
     .panel {
-      background: linear-gradient(180deg, rgba(22,22,22,.94), rgba(9,9,9,.88));
+      background: linear-gradient(180deg, rgba(22,22,22,.95), rgba(10,10,10,.9));
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.035), 0 16px 40px rgba(0,0,0,.34);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 8px 32px rgba(0,0,0,.4);
     }
 
-    .select-wrap { position: relative; margin-bottom: 12px; }
+    /* ── SELECT ── */
+    .select-wrap { position: relative; margin-bottom: 10px; }
     .select-wrap::after {
-      content: "⌄";
-      position: absolute;
-      right: 18px; top: 50%;
-      transform: translateY(-56%);
-      color: var(--red); font-size: 34px;
-      pointer-events: none;
+      content: '⌄';
+      position: absolute; right: 16px; top: 50%;
+      transform: translateY(-58%);
+      color: var(--work); font-size: 30px; pointer-events: none;
     }
-
     select {
-      width: 100%;
-      appearance: none;
-      border: 1px solid rgba(240,6,18,.65);
-      background: rgba(10,10,10,.86);
-      color: #fff;
-      border-radius: 14px;
-      padding: 17px 52px 17px 18px;
-      font-size: 21px;
-      font-weight: 750;
-      outline: none;
+      width: 100%; appearance: none; -webkit-appearance: none;
+      border: 1px solid rgba(232,0,10,.6);
+      background: rgba(10,10,10,.88);
+      color: #fff; border-radius: var(--radius);
+      padding: 15px 48px 15px 16px;
+      font-size: 19px; font-weight: 700; outline: none;
     }
 
+    /* ── LEVELS ── */
     .levels {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0;
-      overflow: hidden;
-      margin-bottom: 12px;
-      border-radius: 14px;
+      display: grid; grid-template-columns: repeat(4,1fr);
+      overflow: hidden; border-radius: var(--radius);
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
     }
     .levels button {
-      border: 0;
-      border-right: 1px solid var(--line);
-      background: rgba(18,18,18,.78);
-      color: #ddd;
-      padding: 13px 0;
-      font-size: 15px;
-      font-weight: 750;
+      border: none; border-right: 1px solid var(--line);
+      background: rgba(18,18,18,.8);
+      color: rgba(255,255,255,.55);
+      padding: 12px 0; font-size: 13px; font-weight: 700;
+      letter-spacing: .05em;
     }
-    .levels button:last-child { border-right: 0; }
+    .levels button:last-child { border-right: none; }
     .levels button.active {
       background: linear-gradient(180deg, #ff111b, #b90008);
       color: #fff;
-      box-shadow: 0 0 22px rgba(240,6,18,.38) inset, 0 0 18px rgba(240,6,18,.25);
+      box-shadow: inset 0 0 20px rgba(240,6,18,.3);
     }
 
+    /* ── SUMMARY（編集可能） ── */
     .summary {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px; margin-bottom: 10px;
     }
     .summary-card {
-      text-align: center;
-      padding: 11px 6px 10px;
-      border-radius: 13px;
+      text-align: center; padding: 10px 4px 8px;
+      border-radius: 12px;
     }
-    .summary-card .label { font-size: 11px; color: rgba(255,255,255,.62); margin-bottom: 4px; letter-spacing: .04em; }
-    .summary-card .value { font-size: 28px; font-weight: 950; line-height: 1; }
-    .summary-card .unit { font-size: 11px; color: rgba(255,255,255,.55); margin-top: 4px; }
+    .summary-card .s-label {
+      font-size: 10px; color: var(--muted);
+      letter-spacing: .08em; margin-bottom: 4px;
+    }
+    .summary-card input[type="number"] {
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid rgba(255,255,255,.15);
+      color: #fff; text-align: center;
+      font-size: 30px; font-weight: 900; line-height: 1;
+      outline: none; -moz-appearance: textfield;
+      padding: 2px 0;
+    }
+    .summary-card input[type="number"]::-webkit-inner-spin-button,
+    .summary-card input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .summary-card input[type="number"]:focus { border-bottom-color: var(--work); }
+    .summary-card .s-unit { font-size: 10px; color: var(--muted); margin-top: 4px; }
+    .s-total { font-size: 10px; color: var(--muted); text-align: center; margin-bottom: 10px; letter-spacing: .05em; }
 
-    .guide-card {
-      margin-bottom: 12px;
-      overflow: hidden;
-      border-radius: 14px;
-    }
+    /* ── GUIDE IMAGE ── */
+    .guide-card { margin-bottom: 10px; overflow: hidden; border-radius: var(--radius); }
     .guide-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 14px;
-      color: rgba(255,255,255,.78);
-      font-size: 13px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px; color: var(--muted);
     }
-    .guide-head strong { color: #fff; font-size: 14px; }
-    .guide-image-wrap { background: rgba(255,255,255,.035); padding: 8px; }
+    .guide-head strong { color: #fff; font-size: 13px; }
+    .guide-image-wrap { background: rgba(255,255,255,.03); padding: 8px; }
     .guide-image {
-      width: 100%;
-      display: block;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.1);
+      width: 100%; display: block; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
       cursor: zoom-in;
-      max-height: 220px;
-      object-fit: cover;
-      object-position: top center;
-      background: rgba(255,255,255,.06);
+      max-height: 200px; object-fit: cover; object-position: top center;
+      background: rgba(255,255,255,.05);
     }
-    .guide-note {
-      padding: 8px 12px 12px;
-      color: rgba(255,255,255,.48);
-      font-size: 12px;
-      text-align: center;
-    }
+    .guide-note { padding: 6px 12px 10px; color: var(--muted); font-size: 11px; text-align: center; }
 
+    /* ── START ── */
     .start-btn {
-      width: 100%;
-      height: 74px;
-      border: 1px solid rgba(240,6,18,.75);
-      border-radius: 14px;
-      color: #fff;
+      width: 100%; height: 68px;
+      border: 1px solid rgba(232,0,10,.7); border-radius: var(--radius);
       background: linear-gradient(180deg, #ff111b, #b90008);
-      font-size: 30px;
-      font-weight: 950;
-      letter-spacing: .25em;
-      text-indent: .25em;
-      text-shadow: 0 1px 0 rgba(0,0,0,.3);
-      box-shadow: 0 0 26px rgba(240,6,18,.33);
-      margin-bottom: 12px;
+      color: #fff; font-size: 28px; font-weight: 900;
+      letter-spacing: .25em; text-shadow: 0 1px 0 rgba(0,0,0,.3);
+      box-shadow: 0 0 24px rgba(232,0,10,.3);
+      margin-bottom: 10px;
     }
 
-    .sound {
-      padding: 14px 12px 12px;
-      margin-bottom: auto;
-      border-radius: 14px;
+    /* ── SOUND ── */
+    .sound { padding: 12px; margin-bottom: 0; border-radius: var(--radius); }
+    .sound-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .sound-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .sound-block { text-align: center; border-right: 1px solid var(--line); padding-right: 6px; }
+    .sound-block:last-child { border-right: none; padding-right: 0; }
+    .sound-label { font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+    .sound-block select {
+      font-size: 11px; padding: 7px 20px 7px 8px;
+      border-color: rgba(255,255,255,.12); border-radius: 8px;
+      background: rgba(10,10,10,.8);
     }
-    .sound-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #fff;
-      font-size: 16px;
-      margin-bottom: 12px;
-      font-weight: 750;
-    }
-    .sound-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .sound-block {
-      min-width: 0;
-      text-align: center;
-      border-right: 1px solid rgba(255,255,255,.12);
-      padding-right: 8px;
-    }
-    .sound-block:last-child { border-right: 0; padding-right: 0; }
-    .sound-icon { color: var(--red); font-size: 20px; margin-bottom: 5px; }
-    .sound-label { font-size: 11px; color: rgba(255,255,255,.78); margin-bottom: 7px; white-space: nowrap; }
-    .sound-block select { font-size: 12px; padding: 9px 22px 9px 8px; border-color: rgba(255,255,255,.13); border-radius: 8px; }
 
+    /* ── FOOTER ── */
     .footer {
-      text-align: center;
-      color: rgba(255,255,255,.55);
-      font-size: 12px;
-      letter-spacing: .3em;
-      padding-top: 22px;
-      padding-bottom: 4px;
+      text-align: center; color: rgba(255,255,255,.55);
+      font-size: 11px; letter-spacing: .35em;
+      padding-top: 18px; padding-bottom: 4px;
     }
 
-    .run-screen {
-      min-height: calc(100vh - max(22px, env(safe-area-inset-top)) - max(16px, env(safe-area-inset-bottom)));
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 18px;
-      padding-top: 20px;
+    /* ======= TIMER SCREEN ======= */
+    #runScreen {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 100vh; min-height: 100svh;
+      gap: 12px; padding: 24px 16px 40px;
     }
 
     .run-exercise {
-      font-size: 13px;
-      color: rgba(255,255,255,.55);
-      letter-spacing: .16em;
-      text-align: center;
+      font-size: 12px; letter-spacing: .3em;
+      color: var(--muted); text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      text-transform: uppercase;
     }
 
-    .phase {
-      font-size: 18px;
-      font-weight: 950;
-      letter-spacing: .45em;
-      transform: translateX(.225em);
-      text-shadow: 0 0 10px currentColor;
+    .phase-label {
+      font-size: 16px; font-weight: 900;
+      letter-spacing: .5em; text-shadow: 0 0 12px currentColor;
     }
-    .phase.work { color: var(--red); }
-    .phase.rest { color: var(--blue); }
+    .phase-label.work { color: var(--work); }
+    .phase-label.rest { color: var(--rest); }
 
+    /* Ring */
     .ring-wrap {
       position: relative;
-      width: min(72vw, 310px);
+      width: min(72vw, 300px);
       aspect-ratio: 1;
-      display: grid;
-      place-items: center;
+      display: grid; place-items: center;
     }
-    svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
-    circle.track { stroke: var(--dark-ring); }
-    circle.progress {
-      transition: stroke-dashoffset .9s linear, stroke .25s ease, filter .25s ease;
-      stroke-linecap: round;
+    .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+    .ring-track { fill: none; stroke: rgba(255,255,255,.08); stroke-width: 14; }
+    .ring-prog {
+      fill: none; stroke-width: 14; stroke-linecap: round;
+      transition: stroke-dashoffset .95s linear, stroke .3s ease, filter .3s ease;
     }
-
     .time-big {
       position: absolute;
-      font-size: 78px;
-      font-weight: 950;
-      letter-spacing: -.04em;
-      text-shadow: 0 0 18px currentColor;
+      font-size: clamp(72px, 18vw, 108px);
+      font-weight: 900; letter-spacing: -.03em;
+      text-shadow: 0 0 20px currentColor;
+      font-variant-numeric: tabular-nums;
     }
-    .work-color { color: var(--red); }
-    .rest-color { color: var(--blue); }
-    .blink { animation: blink .55s ease-in-out infinite; }
-    @keyframes blink { 50% { opacity: .38; transform: scale(.985); } }
+    .time-big.work { color: var(--work); }
+    .time-big.rest { color: var(--rest); }
+    .blink { animation: blink .5s ease-in-out infinite; }
+    @keyframes blink { 50% { opacity: .3; } }
 
-    .set-read {
-      color: rgba(255,255,255,.46);
-      font-weight: 750;
-      letter-spacing: .32em;
-      transform: translateX(.16em);
-      font-size: 15px;
+    /* Sets */
+    .sets-row {
+      display: flex; align-items: baseline; gap: 4px;
+      font-variant-numeric: tabular-nums;
     }
-    .set-read strong { color:#fff; font-size: 44px; letter-spacing: .02em; margin: 0 8px; }
+    .sets-label { font-size: 11px; letter-spacing: .4em; color: var(--muted); }
+    .sets-count { font-size: clamp(36px, 9vw, 54px); font-weight: 900; color: #fff; min-width: 2ch; text-align: center; }
+    .sets-total { font-size: 15px; color: var(--muted); font-weight: 300; }
 
+    /* Toast */
     .toast {
-      min-height: 58px;
-      padding: 12px 20px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 12px;
-      color: rgba(255,255,255,.86);
-      text-align: center;
-      line-height: 1.45;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: .25s ease;
-      background: rgba(10,10,10,.66);
-      width: min(320px, 88vw);
+      padding: 10px 18px;
+      border: 1px solid rgba(255,255,255,.1); border-radius: 10px;
+      color: rgba(255,255,255,.8); text-align: center;
+      font-size: 13px; line-height: 1.5;
+      background: rgba(10,10,10,.7);
+      opacity: 0; transform: translateY(6px);
+      transition: .2s ease;
+      width: min(300px, 86vw);
+      min-height: 46px;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    .run-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      width: min(280px, 78vw);
-      margin-bottom: 34px;
+    /* Controls */
+    .run-controls { display: flex; gap: 12px; }
+    .run-btn {
+      height: 52px; padding: 0 26px;
+      background: rgba(10,10,10,.6);
+      border: 1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.5); border-radius: 8px;
+      font-size: 15px; font-weight: 900; letter-spacing: .2em;
     }
-    .run-actions button {
-      height: 56px;
-      background: rgba(10,10,10,.55);
-      border: 1px solid rgba(255,255,255,.14);
-      color: rgba(255,255,255,.58);
-      border-radius: 6px;
-      font-weight: 950;
-      letter-spacing: .25em;
-    }
-    .run-actions .pause-active { color: var(--red); border-color: rgba(240,6,18,.55); }
-    .run-actions.resting .pause-active { color: var(--blue); border-color: rgba(142,212,255,.58); }
+    .run-btn.active-work { color: var(--work); border-color: rgba(232,0,10,.5); }
+    .run-btn.active-rest { color: var(--rest); border-color: rgba(142,212,255,.5); }
 
+    /* ── IMAGE MODAL ── */
     .modal {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      background: rgba(0,0,0,.86);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
+      position: fixed; inset: 0; z-index: 20;
+      background: rgba(0,0,0,.88);
+      display: none; align-items: center; justify-content: center;
+      padding: 14px;
     }
     .modal.show { display: flex; }
-    .modal-inner { width: min(1100px, 100%); max-height: 92svh; position: relative; }
+    .modal-inner { width: min(100%, 900px); max-height: 92svh; position: relative; }
     .modal img { width: 100%; max-height: 92svh; object-fit: contain; display: block; border-radius: 12px; background: #fff; }
     .modal-close {
-      position: absolute;
-      top: -12px; right: -6px;
-      width: 42px; height: 42px;
-      border: 1px solid rgba(255,255,255,.22);
-      border-radius: 999px;
-      background: rgba(0,0,0,.78);
-      color: #fff; font-size: 24px; line-height: 1;
+      position: absolute; top: -10px; right: -6px;
+      width: 40px; height: 40px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(0,0,0,.8); color: #fff; font-size: 22px; line-height: 1;
     }
 
+    /* ── COMPLETE MODAL ── */
     .complete-box {
-      width: min(330px, 90vw);
-      border: 1px solid rgba(240,6,18,.55);
+      width: min(320px, 88vw);
+      border: 1px solid rgba(232,0,10,.5);
       border-radius: 16px;
-      background: rgba(10,10,10,.94);
-      padding: 28px 20px 22px;
-      text-align: center;
-      box-shadow: 0 0 42px rgba(240,6,18,.2);
+      background: rgba(10,10,10,.95);
+      padding: 28px 20px 22px; text-align: center;
+      box-shadow: 0 0 40px rgba(232,0,10,.2);
     }
-    .complete-box h2 { margin: 0 0 8px; color: var(--red); font-size: 28px; letter-spacing: .14em; }
-    .complete-box p { color: rgba(255,255,255,.7); line-height: 1.7; margin: 0 0 20px; }
+    .complete-box h2 { color: var(--work); font-size: 26px; letter-spacing: .15em; margin-bottom: 10px; }
+    .complete-box p { color: var(--muted); line-height: 1.8; margin-bottom: 20px; font-size: 14px; }
     .complete-box button {
-      width: 100%; height: 52px;
-      border: 0; border-radius: 10px;
+      width: 100%; height: 50px; border: none; border-radius: 10px;
       background: linear-gradient(180deg, #ff111b, #b90008);
-      color: #fff; font-weight: 950; letter-spacing: .18em;
+      color: #fff; font-size: 18px; font-weight: 900; letter-spacing: .2em;
     }
 
-    @media (max-height: 760px) {
-      .logo { margin: 8px 0 14px; font-size: 42px; }
-      select { padding-top: 13px; padding-bottom: 13px; font-size: 18px; }
-      .levels button { padding: 10px 0; }
-      .summary-card { padding: 8px 4px; }
-      .summary-card .value { font-size: 24px; }
-      .guide-image { max-height: 150px; }
-      .start-btn { height: 60px; font-size: 24px; }
-      .sound { padding: 10px; }
-      .sound-title { margin-bottom: 8px; }
-      .sound-icon { display: none; }
-      .sound-label { font-size: 10px; }
-      .footer { padding-top: 12px; }
+    @media (max-height: 750px) {
+      .logo { font-size: 42px; margin-bottom: 12px; }
+      select { padding: 11px 48px 11px 16px; font-size: 17px; }
+      .levels button { padding: 9px 0; }
+      .summary-card input[type="number"] { font-size: 24px; }
+      .guide-image { max-height: 140px; }
+      .start-btn { height: 56px; font-size: 22px; }
+      .footer { padding-top: 10px; }
     }
   </style>
 </head>
 <body>
-  <main class="app">
-    <section id="settingsScreen">
-      <div class="logo">HIIT</div>
+<main class="app">
 
-      <div class="select-wrap">
-        <select id="exerciseSelect" aria-label="種目を選択"></select>
-      </div>
+  <!-- ===== SETTINGS ===== -->
+  <section id="settingsScreen">
+    <div class="logo">HIIT</div>
 
-      <div class="levels panel" id="levelButtons">
-        <button data-level="low">LOW</button>
-        <button data-level="normal" class="active">NORMAL</button>
-        <button data-level="high">HARD</button>
-        <button data-level="advanced">TABATA</button>
-      </div>
-
-      <div class="summary">
-        <div class="summary-card panel"><div class="label">WORK</div><div id="workNum" class="value">20</div><div class="unit">秒</div></div>
-        <div class="summary-card panel"><div class="label">REST</div><div id="restNum" class="value">40</div><div class="unit">秒</div></div>
-        <div class="summary-card panel"><div class="label">SET</div><div id="setsNum" class="value">8</div><div class="unit" id="totalTime">8分</div></div>
-      </div>
-
-      <div class="guide-card panel">
-        <div class="guide-head"><strong>フォーム確認</strong><span>画像タップで拡大</span></div>
-        <div class="guide-image-wrap">
-          <img id="guideImage" class="guide-image" src="" alt="トレーニングのやり方" />
-        </div>
-        <div class="guide-note" id="guideNote">選択した種目のやり方を確認できます</div>
-      </div>
-
-      <button id="startBtn" class="start-btn">START</button>
-
-      <div class="sound panel">
-        <div class="sound-title"><span style="color:var(--red);font-size:22px;">▻</span>サウンド設定</div>
-        <div class="sound-grid">
-          <div class="sound-block">
-            <div class="sound-icon">♙</div>
-            <div class="sound-label">トレーニング終了</div>
-            <select id="workSound"><option value="beep">ビープ</option><option value="bell">ベル</option><option value="buzzer">ブザー</option><option value="blip">ブリップ</option><option value="none">なし</option></select>
-          </div>
-          <div class="sound-block">
-            <div class="sound-icon">♜</div>
-            <div class="sound-label">休憩終了</div>
-            <select id="restSound"><option value="beep">ビープ</option><option value="bell" selected>ベル</option><option value="buzzer">ブザー</option><option value="blip">ブリップ</option><option value="none">なし</option></select>
-          </div>
-          <div class="sound-block">
-            <div class="sound-icon">♕</div>
-            <div class="sound-label">全セット完了</div>
-            <select id="completeSound"><option value="fanfare" selected>ファンファーレ</option><option value="bell">ベル</option><option value="beep">ビープ</option><option value="none">なし</option></select>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer">act creation.com</div>
-    </section>
-
-    <section id="runScreen" class="run-screen hidden">
-      <div id="runExercise" class="run-exercise">BURPEE</div>
-      <div id="phaseLabel" class="phase work">WORK</div>
-      <div class="ring-wrap">
-        <svg viewBox="0 0 220 220" aria-hidden="true">
-          <circle class="track" cx="110" cy="110" r="92" fill="none" stroke-width="18" />
-          <circle id="progressCircle" class="progress" cx="110" cy="110" r="92" fill="none" stroke-width="18" />
-        </svg>
-        <div id="timeBig" class="time-big work-color">20</div>
-      </div>
-      <div class="set-read">SET <strong id="currentSetText">1</strong>/ <span id="totalSetText">8</span></div>
-      <div id="toast" class="toast">残り3秒<br>まもなく終了します</div>
-      <div id="runActions" class="run-actions">
-        <button id="pauseBtn" class="pause-active">PAUSE</button>
-        <button id="stopBtn">STOP</button>
-      </div>
-      <div class="footer">act creation.com</div>
-    </section>
-  </main>
-
-  <div id="imageModal" class="modal" aria-hidden="true">
-    <div class="modal-inner">
-      <button id="modalClose" class="modal-close" aria-label="閉じる">×</button>
-      <img id="modalImage" src="" alt="拡大画像" />
+    <div class="select-wrap">
+      <select id="exerciseSelect"></select>
     </div>
-  </div>
 
-  <div id="completeModal" class="modal" aria-hidden="true">
-    <div class="complete-box">
-      <h2>COMPLETE</h2>
-      <p>全セット完了。<br>お疲れさま。</p>
-      <button id="completeOk">OK</button>
+    <div class="levels panel" id="levelButtons">
+      <button data-level="low">LOW</button>
+      <button data-level="normal" class="active">NORMAL</button>
+      <button data-level="high">HARD</button>
+      <button data-level="advanced">TABATA</button>
     </div>
+
+    <div class="summary">
+      <div class="summary-card panel">
+        <div class="s-label">WORK</div>
+        <input type="number" id="inpWork" min="1" max="999" value="20">
+        <div class="s-unit">秒</div>
+      </div>
+      <div class="summary-card panel">
+        <div class="s-label">REST</div>
+        <input type="number" id="inpRest" min="1" max="999" value="40">
+        <div class="s-unit">秒</div>
+      </div>
+      <div class="summary-card panel">
+        <div class="s-label">SET</div>
+        <input type="number" id="inpSets" min="1" max="99" value="8">
+        <div class="s-unit" id="totalTimeLabel">8分</div>
+      </div>
+    </div>
+    <div class="s-total" id="totalTimeDetail"></div>
+
+    <div class="guide-card panel">
+      <div class="guide-head">
+        <strong>フォーム確認</strong>
+        <span>タップで拡大</span>
+      </div>
+      <div class="guide-image-wrap">
+        <img id="guideImage" class="guide-image" src="" alt="トレーニングのやり方">
+      </div>
+      <div class="guide-note" id="guideNote">種目を選択してフォームを確認</div>
+    </div>
+
+    <button class="start-btn" id="startBtn">START</button>
+
+    <div class="sound panel">
+      <div class="sound-title"><span style="color:var(--work)">▻</span> サウンド設定</div>
+      <div class="sound-grid">
+        <div class="sound-block">
+          <div class="sound-label">トレーニング終了</div>
+          <select id="sndWork">
+            <option value="beep" selected>ビープ</option>
+            <option value="bell">ベル</option>
+            <option value="buzzer">ブザー</option>
+            <option value="blip">ブリップ</option>
+            <option value="none">なし</option>
+          </select>
+        </div>
+        <div class="sound-block">
+          <div class="sound-label">休憩終了</div>
+          <select id="sndRest">
+            <option value="beep">ビープ</option>
+            <option value="bell" selected>ベル</option>
+            <option value="buzzer">ブザー</option>
+            <option value="blip">ブリップ</option>
+            <option value="none">なし</option>
+          </select>
+        </div>
+        <div class="sound-block">
+          <div class="sound-label">全セット完了</div>
+          <select id="sndDone">
+            <option value="fanfare" selected>ファンファーレ</option>
+            <option value="bell">ベル</option>
+            <option value="beep">ビープ</option>
+            <option value="none">なし</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">actcreation-lab.com</div>
+  </section>
+
+  <!-- ===== TIMER ===== -->
+  <section id="runScreen" class="hidden">
+    <div class="run-exercise" id="runExercise"></div>
+    <div class="phase-label work" id="phaseLabel">WORK</div>
+
+    <div class="ring-wrap">
+      <svg class="ring-svg" viewBox="0 0 220 220" aria-hidden="true">
+        <circle class="ring-track" cx="110" cy="110" r="92"/>
+        <circle class="ring-prog" id="ringProg" cx="110" cy="110" r="92"/>
+      </svg>
+      <div class="time-big work" id="timeBig">20</div>
+    </div>
+
+    <div class="sets-row">
+      <span class="sets-label">SET&nbsp;</span>
+      <span class="sets-count" id="setsCount">1</span>
+      <span class="sets-total" id="setsTotal">&nbsp;/ 8</span>
+    </div>
+
+    <div class="toast" id="toast">まもなく切り替わります</div>
+
+    <div class="run-controls">
+      <button class="run-btn active-work" id="pauseBtn" onclick="togglePause()">PAUSE</button>
+      <button class="run-btn" onclick="stopTimer()">STOP</button>
+    </div>
+
+    <div class="footer">actcreation-lab.com</div>
+  </section>
+
+</main>
+
+<!-- IMAGE MODAL -->
+<div id="imageModal" class="modal">
+  <div class="modal-inner">
+    <button class="modal-close" id="modalClose">×</button>
+    <img id="modalImage" src="" alt="拡大">
   </div>
+</div>
 
-  <script>
-    // 画像フォルダ：GitHubの「画像」フォルダを使用
-    const imageBase = "画像/";
+<!-- COMPLETE MODAL -->
+<div id="completeModal" class="modal">
+  <div class="complete-box">
+    <h2>COMPLETE</h2>
+    <p id="completeMsg">全セット完了！<br>お疲れさまでした。</p>
+    <button id="completeOk">OK</button>
+  </div>
+</div>
 
-    const exercises = {
-      "バーピー":           { image: "burpee.png",            presets: { low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
-      "マウンテンクライマー":{ image: "mountain-climber.png",  presets: { low:{work:20,rest:40,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
-      "ハイニー":           { image: "high-knees.png",         presets: { low:{work:20,rest:40,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
-      "ショルダータッププランク":{ image: "shoulder-tap-plank.png", presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
-      "ジャンピングランジ":  { image: "jumping-lunge.png",     presets: { low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
-      "ジャンプスクワット":  { image: "jump-squat.png",        presets: { low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
-      "プランク":           { image: "plank.png",              presets: { low:{work:30,rest:30,sets:4}, normal:{work:40,rest:20,sets:5}, high:{work:45,rest:15,sets:6}, advanced:{work:60,rest:10,sets:4} } },
-      "バイシクルクランチ":  { image: "bicycle-crunch.png",    presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
-      "レッグレイズ":       { image: "leg-raise.png",          presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
-      "プッシュアップ":     { image: "push-up.png",            presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
-      "スクワットホールド": { image: "squat-hold.png",         presets: { low:{work:30,rest:30,sets:4}, normal:{work:40,rest:20,sets:5}, high:{work:45,rest:15,sets:6}, advanced:{work:60,rest:10,sets:4} } },
-      "ヒップリフト":       { image: "hip-lift.png",           presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
-      "プランクアップダウン":{ image: "plank-up-down.png",     presets: { low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } }
-    };
+<script>
+// ── exercises ──
+const exercises = {
+  "バーピー":            { image:"burpee.png",            presets:{ low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+  "マウンテンクライマー": { image:"mountain-climber.png",  presets:{ low:{work:20,rest:40,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+  "ハイニー":            { image:"high-knees.png",         presets:{ low:{work:20,rest:40,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+  "ショルダータッププランク":{ image:"shoulder-tap-plank.png", presets:{ low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+  "ジャンピングランジ":   { image:"jumping-lunge.png",     presets:{ low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+  "ジャンプスクワット":   { image:"jump-squat.png",        presets:{ low:{work:15,rest:45,sets:6}, normal:{work:20,rest:40,sets:8}, high:{work:30,rest:30,sets:8}, advanced:{work:20,rest:10,sets:8} } },
+  "プランク":            { image:"plank.png",              presets:{ low:{work:30,rest:30,sets:4}, normal:{work:40,rest:20,sets:5}, high:{work:45,rest:15,sets:6}, advanced:{work:60,rest:10,sets:4} } },
+  "バイシクルクランチ":   { image:"bicycle-crunch.png",    presets:{ low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+  "レッグレイズ":        { image:"leg-raise.png",          presets:{ low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+  "プッシュアップ":      { image:"push-up.png",            presets:{ low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+  "スクワットホールド":  { image:"squat-hold.png",         presets:{ low:{work:30,rest:30,sets:4}, normal:{work:40,rest:20,sets:5}, high:{work:45,rest:15,sets:6}, advanced:{work:60,rest:10,sets:4} } },
+  "ヒップリフト":        { image:"hip-lift.png",           presets:{ low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+  "プランクアップダウン": { image:"plank-up-down.png",     presets:{ low:{work:20,rest:40,sets:6}, normal:{work:30,rest:30,sets:8}, high:{work:40,rest:20,sets:8}, advanced:{work:30,rest:10,sets:8} } },
+};
 
-    const state = {
-      exercise: "バーピー",
-      level: "normal",
-      work: 20, rest: 40, sets: 8,
-      phase: "work",
-      currentSet: 1,
-      remaining: 20,
-      duration: 20,
-      running: false,
-      timer: null,
-      audioCtx: null
-    };
+const IMAGE_FOLDER = "画像/";
+const CIRCUM = 2 * Math.PI * 92;
 
-    const $ = id => document.getElementById(id);
-    const circumference = 2 * Math.PI * 92;
-    const progress = $("progressCircle");
-    progress.style.strokeDasharray = circumference;
-    progress.style.strokeDashoffset = 0;
+// ── State ──
+const state = {
+  exercise: "バーピー",
+  level: "normal",
+  phase: "work",
+  currentSet: 1,
+  totalSets: 8,
+  workSec: 20, restSec: 40,
+  remaining: 20, duration: 20,
+  running: false, timer: null,
+  audioCtx: null
+};
 
-    Object.keys(exercises).forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      option.textContent = name;
-      $("exerciseSelect").appendChild(option);
-    });
+const $ = id => document.getElementById(id);
 
-    function formatTotal(seconds) {
-      const min = Math.floor(seconds / 60);
-      const sec = seconds % 60;
-      return sec === 0 ? `${min}分` : `${min}分${sec}秒`;
-    }
+// ── Build select ──
+Object.keys(exercises).forEach(name => {
+  const opt = document.createElement("option");
+  opt.value = name; opt.textContent = name;
+  $("exerciseSelect").appendChild(opt);
+});
 
-    function calcTotalSeconds(preset) {
-      return (preset.work + preset.rest) * preset.sets;
-    }
+// ── Format ──
+function formatTime(sec) {
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return s === 0 ? `${m}分` : `${m}分${s}秒`;
+}
+function calcTotal(w, r, sets) { return (w + r) * sets; }
 
-    function currentPreset() {
-      return exercises[state.exercise].presets[state.level];
-    }
+// ── Update settings view ──
+function updateSettingsView() {
+  const p = exercises[state.exercise].presets[state.level];
+  $("inpWork").value = p.work;
+  $("inpRest").value = p.rest;
+  $("inpSets").value = p.sets;
+  updateTotalLabel();
 
-    function applyPreset() {
-      const p = currentPreset();
-      state.work = p.work; state.rest = p.rest; state.sets = p.sets;
-      state.remaining = p.work; state.duration = p.work;
-      updateSettingsView();
-    }
+  document.querySelectorAll("#levelButtons button").forEach(btn =>
+    btn.classList.toggle("active", btn.dataset.level === state.level)
+  );
 
-    function updateSettingsView() {
-      const p = currentPreset();
-      $("exerciseSelect").value = state.exercise;
-      $("workNum").textContent = p.work;
-      $("restNum").textContent = p.rest;
-      $("setsNum").textContent = p.sets;
-      $("totalTime").textContent = formatTotal(calcTotalSeconds(p));
-      document.querySelectorAll("#levelButtons button").forEach(btn =>
-        btn.classList.toggle("active", btn.dataset.level === state.level)
-      );
-      const filename = exercises[state.exercise].image;
-      const img = $("guideImage");
-      img.src = imageBase + filename;
-      img.alt = `${state.exercise}のやり方`;
-      $("guideNote").textContent = `${state.exercise}のフォームを確認`;
-    }
+  const img = $("guideImage");
+  img.src = IMAGE_FOLDER + exercises[state.exercise].image;
+  img.alt = state.exercise + "のやり方";
+  $("guideNote").textContent = state.exercise + "のフォームを確認";
+}
 
-    function initAudio() {
-      if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (state.audioCtx.state === "suspended") state.audioCtx.resume();
-    }
+function updateTotalLabel() {
+  const w = parseInt($("inpWork").value) || 0;
+  const r = parseInt($("inpRest").value) || 0;
+  const s = parseInt($("inpSets").value) || 0;
+  const total = calcTotal(w, r, s);
+  $("totalTimeLabel").textContent = formatTime(total);
+}
 
-    function tone(freq, duration, type = "sine", delay = 0, gainValue = 0.08) {
-      if (!state.audioCtx) return;
-      const ctx = state.audioCtx;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-      gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
-      gain.gain.exponentialRampToValueAtTime(gainValue, ctx.currentTime + delay + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + duration + 0.02);
-    }
+// 手動変更でもラベル更新
+["inpWork","inpRest","inpSets"].forEach(id => {
+  $(id).addEventListener("input", updateTotalLabel);
+});
 
-    function playSound(name) {
-      if (name === "none") return;
-      initAudio();
-      if (navigator.vibrate) navigator.vibrate(70);
-      if (name === "beep")    tone(880, .16, "sine");
-      if (name === "bell")    { tone(660, .18, "sine"); tone(990, .22, "sine", .16); }
-      if (name === "buzzer")  tone(180, .35, "sawtooth", 0, .06);
-      if (name === "blip")    { tone(520, .08, "square"); tone(740, .08, "square", .1); }
-      if (name === "fanfare") { tone(523, .14, "sine"); tone(659, .14, "sine", .16); tone(784, .28, "sine", .32); }
-    }
+// ── Sound select: play on change ──
+function addSoundPreview(selectId) {
+  $(selectId).addEventListener("change", e => playSound(e.target.value));
+}
+addSoundPreview("sndWork");
+addSoundPreview("sndRest");
+addSoundPreview("sndDone");
 
-    function switchToRun() {
-      initAudio();
-      const p = currentPreset();
-      state.work = p.work; state.rest = p.rest; state.sets = p.sets;
-      state.currentSet = 1; state.phase = "work";
-      state.duration = state.work; state.remaining = state.work;
-      $("settingsScreen").classList.add("hidden");
-      $("runScreen").classList.remove("hidden");
-      $("runExercise").textContent = state.exercise;
-      updateRunView();
-      startTimer();
-    }
+// ── Audio ──
+function initAudio() {
+  if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (state.audioCtx.state === "suspended") state.audioCtx.resume();
+}
+function unlockAudio() {
+  initAudio();
+  const buf = state.audioCtx.createBuffer(1,1,22050);
+  const src = state.audioCtx.createBufferSource();
+  src.buffer = buf; src.connect(state.audioCtx.destination); src.start(0);
+}
+function tone(freq, dur, type="sine", delay=0, vol=0.08) {
+  if (!state.audioCtx) return;
+  const ctx = state.audioCtx;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+  g.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+  g.gain.exponentialRampToValueAtTime(vol, ctx.currentTime + delay + 0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + dur);
+  o.connect(g).connect(ctx.destination);
+  o.start(ctx.currentTime + delay);
+  o.stop(ctx.currentTime + delay + dur + 0.02);
+}
+function playSound(name) {
+  if (name === "none") return;
+  initAudio();
+  if (navigator.vibrate) navigator.vibrate(60);
+  if (name === "beep")    { tone(880,.15); tone(880,.15,undefined,.2); }
+  if (name === "bell")    { tone(660,.18); tone(990,.22,undefined,.18); }
+  if (name === "buzzer")  tone(180,.35,"sawtooth",0,.06);
+  if (name === "blip")    { tone(520,.08,"square"); tone(740,.08,"square",.1); }
+  if (name === "fanfare") { tone(523,.14); tone(659,.14,undefined,.16); tone(784,.28,undefined,.32); }
+}
 
-    function switchToSettings() {
-      clearInterval(state.timer);
-      state.timer = null; state.running = false;
-      $("runScreen").classList.add("hidden");
-      $("settingsScreen").classList.remove("hidden");
-      $("completeModal").classList.remove("show");
-      applyPreset();
-    }
+// ── Level buttons ──
+document.querySelectorAll("#levelButtons button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    state.level = btn.dataset.level;
+    updateSettingsView();
+  });
+});
 
-    function startTimer() {
-      if (state.running) return;
-      state.running = true;
-      state.timer = setInterval(tick, 1000);
-      $("pauseBtn").textContent = "PAUSE";
-    }
+// ── Exercise select ──
+$("exerciseSelect").addEventListener("change", e => {
+  state.exercise = e.target.value;
+  updateSettingsView();
+});
 
-    function pauseTimer() {
-      if (state.running) {
-        clearInterval(state.timer); state.timer = null; state.running = false;
-        $("pauseBtn").textContent = "START";
-      } else {
-        startTimer();
-      }
-    }
+// ── Guide image tap to zoom ──
+$("guideImage").addEventListener("click", () => {
+  $("modalImage").src = $("guideImage").src;
+  $("imageModal").classList.add("show");
+});
+$("modalClose").addEventListener("click", () => $("imageModal").classList.remove("show"));
+$("imageModal").addEventListener("click", e => {
+  if (e.target.id === "imageModal") $("imageModal").classList.remove("show");
+});
 
-    function finishAll() {
-      clearInterval(state.timer); state.timer = null; state.running = false;
-      playSound($("completeSound").value);
-      $("completeModal").classList.add("show");
-    }
+// ── Start ──
+$("startBtn").addEventListener("click", () => {
+  unlockAudio();
+  state.exercise = $("exerciseSelect").value;
+  state.workSec  = Math.max(1, parseInt($("inpWork").value) || 20);
+  state.restSec  = Math.max(1, parseInt($("inpRest").value) || 10);
+  state.totalSets= Math.max(1, parseInt($("inpSets").value) || 4);
+  state.currentSet = 1;
+  state.phase    = "work";
+  state.duration = state.workSec;
+  state.remaining= state.workSec;
 
-    function nextPhase() {
-      if (state.phase === "work") {
-        if (state.currentSet >= state.sets) { finishAll(); return; }
-        playSound($("workSound").value);
-        state.phase = "rest"; state.duration = state.rest; state.remaining = state.rest;
-      } else {
-        playSound($("restSound").value);
-        state.currentSet += 1;
-        state.phase = "work"; state.duration = state.work; state.remaining = state.work;
-      }
-      updateRunView();
-    }
+  $("settingsScreen").classList.add("hidden");
+  $("runScreen").classList.remove("hidden");
+  $("runExercise").textContent = state.exercise;
+  $("setsTotal").textContent = " / " + state.totalSets;
+  updateRunView();
+  startTick();
+});
 
-    function tick() {
-      if (state.remaining > 0) {
-        state.remaining -= 1;
-        updateRunView();
-        if (state.remaining === 0) nextPhase();
-      }
-    }
+// ── Timer ──
+function startTick() {
+  if (state.running) return;
+  state.running = true;
+  state.timer = setInterval(tick, 1000);
+}
 
-    function updateRunView() {
-      const isWork = state.phase === "work";
-      const color = isWork
-        ? getComputedStyle(document.documentElement).getPropertyValue('--red').trim()
-        : getComputedStyle(document.documentElement).getPropertyValue('--blue').trim();
-      const glow = isWork
-        ? "drop-shadow(0 0 11px rgba(240,6,18,.62))"
-        : "drop-shadow(0 0 11px rgba(142,212,255,.55))";
-      const ratio = state.duration ? state.remaining / state.duration : 0;
-      progress.style.strokeDashoffset = circumference * (1 - ratio);
-      progress.style.stroke = color;
-      progress.style.filter = glow;
-      $("phaseLabel").textContent = isWork ? "WORK" : "REST";
-      $("phaseLabel").className = "phase " + (isWork ? "work" : "rest");
-      $("timeBig").textContent = state.remaining;
-      $("timeBig").className = "time-big " + (isWork ? "work-color" : "rest-color") +
-        (state.remaining <= 3 && state.remaining > 0 ? " blink" : "");
-      $("currentSetText").textContent = state.currentSet;
-      $("totalSetText").textContent = state.sets;
-      $("runActions").className = "run-actions" + (isWork ? "" : " resting");
-      $("toast").classList.toggle("show", state.remaining <= 3 && state.remaining > 0);
-    }
+function tick() {
+  if (state.remaining > 0) {
+    state.remaining--;
+    updateRunView();
+    if (state.remaining === 0) nextPhase();
+  }
+}
 
-    document.querySelectorAll("#levelButtons button").forEach(btn => {
-      btn.addEventListener("click", () => { state.level = btn.dataset.level; applyPreset(); });
-    });
+function nextPhase() {
+  if (state.phase === "work") {
+    if (state.currentSet >= state.totalSets) { finishAll(); return; }
+    playSound($("sndWork").value);
+    state.phase = "rest";
+    state.duration = state.restSec;
+    state.remaining = state.restSec;
+  } else {
+    playSound($("sndRest").value);
+    state.currentSet++;
+    state.phase = "work";
+    state.duration = state.workSec;
+    state.remaining = state.workSec;
+  }
+  updateRunView();
+}
 
-    $("exerciseSelect").addEventListener("change", e => { state.exercise = e.target.value; applyPreset(); });
-    $("startBtn").addEventListener("click", switchToRun);
-    $("pauseBtn").addEventListener("click", pauseTimer);
-    $("stopBtn").addEventListener("click", switchToSettings);
-    $("completeOk").addEventListener("click", switchToSettings);
+function finishAll() {
+  clearInterval(state.timer); state.timer = null; state.running = false;
+  playSound($("sndDone").value);
+  $("completeMsg").textContent = state.exercise + "\n全" + state.totalSets + "セット完了！\nお疲れさまでした。";
+  $("completeModal").classList.add("show");
+}
 
-    $("guideImage").addEventListener("click", () => {
-      $("modalImage").src = $("guideImage").src;
-      $("imageModal").classList.add("show");
-    });
-    $("modalClose").addEventListener("click", () => $("imageModal").classList.remove("show"));
-    $("imageModal").addEventListener("click", e => {
-      if (e.target.id === "imageModal") $("imageModal").classList.remove("show");
-    });
+function togglePause() {
+  if (state.running) {
+    clearInterval(state.timer); state.timer = null; state.running = false;
+    $("pauseBtn").textContent = "RESUME";
+    $("pauseBtn").className = "run-btn";
+  } else {
+    startTick();
+    $("pauseBtn").textContent = "PAUSE";
+    $("pauseBtn").className = "run-btn active-" + state.phase;
+  }
+}
 
-    applyPreset();
-  </script>
+function stopTimer() {
+  clearInterval(state.timer); state.timer = null; state.running = false;
+  $("runScreen").classList.add("hidden");
+  $("settingsScreen").classList.remove("hidden");
+  updateSettingsView();
+}
+
+$("completeOk").addEventListener("click", () => {
+  $("completeModal").classList.remove("show");
+  $("runScreen").classList.add("hidden");
+  $("settingsScreen").classList.remove("hidden");
+  updateSettingsView();
+});
+
+// ── Ring ──
+const ringProg = $("ringProg");
+ringProg.style.strokeDasharray = CIRCUM;
+
+function updateRunView() {
+  const isWork = state.phase === "work";
+  const ratio = state.duration ? state.remaining / state.duration : 0;
+  const color = isWork ? "var(--work)" : "var(--rest)";
+  const glow  = isWork
+    ? "drop-shadow(0 0 10px rgba(232,0,10,.6))"
+    : "drop-shadow(0 0 10px rgba(142,212,255,.55))";
+
+  ringProg.style.strokeDashoffset = CIRCUM * (1 - ratio);
+  ringProg.style.stroke  = color;
+  ringProg.style.filter  = glow;
+
+  const timeEl = $("timeBig");
+  timeEl.textContent = state.remaining;
+  timeEl.className   = "time-big " + state.phase + (state.remaining <= 3 && state.remaining > 0 ? " blink" : "");
+
+  const label = $("phaseLabel");
+  label.textContent = isWork ? "WORK" : "REST";
+  label.className   = "phase-label " + state.phase;
+
+  $("setsCount").textContent = state.currentSet;
+
+  const pauseBtn = $("pauseBtn");
+  if (state.running) pauseBtn.className = "run-btn active-" + state.phase;
+
+  $("toast").classList.toggle("show", state.remaining <= 3 && state.remaining > 0);
+}
+
+// ── Init ──
+updateSettingsView();
+</script>
 </body>
 </html>
