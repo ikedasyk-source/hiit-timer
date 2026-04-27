@@ -23,58 +23,25 @@
   --surface: #181818;
 }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-  background: #0c0c0c;
-}
+html, body { height: 100%; overflow: hidden; background: #0c0c0c; }
 
 body {
   color: var(--text);
   font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
   position: relative;
 }
 
-/* ── カーボン柄 ── */
 body::before {
   content: '';
-  position: fixed; inset: 0;
-  z-index: 0;
-  pointer-events: none;
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-color: #0c0c0c;
   background-image:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.06) 0px,
-      rgba(255,255,255,0.06) 1px,
-      transparent 1px,
-      transparent 4px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      rgba(255,255,255,0.06) 0px,
-      rgba(255,255,255,0.06) 1px,
-      transparent 1px,
-      transparent 4px
-    ),
-    repeating-linear-gradient(
-      135deg,
-      rgba(0,0,0,0.7) 0px,
-      rgba(0,0,0,0.7) 4px,
-      transparent 4px,
-      transparent 8px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      rgba(0,0,0,0.7) 0px,
-      rgba(0,0,0,0.7) 4px,
-      transparent 4px,
-      transparent 8px
-    ),
+    repeating-linear-gradient(135deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(45deg,  rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 4px),
+    repeating-linear-gradient(135deg, rgba(0,0,0,0.7) 0px, rgba(0,0,0,0.7) 4px, transparent 4px, transparent 8px),
+    repeating-linear-gradient(45deg,  rgba(0,0,0,0.7) 0px, rgba(0,0,0,0.7) 4px, transparent 4px, transparent 8px),
     radial-gradient(ellipse at 30% 20%, rgba(110,110,110,0.28) 0%, transparent 50%),
     radial-gradient(ellipse at 70% 80%, rgba(10,10,10,0.6) 0%, transparent 50%);
   background-size: 8px 8px, 8px 8px, 8px 8px, 8px 8px, 100% 100%, 100% 100%;
@@ -82,56 +49,76 @@ body::before {
 
 body > * { position: relative; z-index: 1; }
 
-/* ── フッター ── */
 .footer {
-  position: fixed;
-  bottom: 18px;
-  left: 0; right: 0;
-  z-index: 100;
+  position: fixed; bottom: 18px; left: 0; right: 0; z-index: 100;
   text-align: center;
   font-family: 'Share Tech Mono', 'Courier New', monospace;
-  font-size: 11px;
-  letter-spacing: 0.45em;
+  font-size: 11px; letter-spacing: 0.45em;
   color: rgba(255,255,255,0.55);
-  text-transform: lowercase;
-  pointer-events: none;
+  text-transform: lowercase; pointer-events: none;
 }
 
 /* ======= SETUP ======= */
 #setup {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-  padding: 20px 24px 60px;
-  overflow-y: auto;
-  max-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 16px;
+  width: 100%; padding: 16px 24px 60px;
+  overflow-y: auto; max-height: 100vh;
 }
 
 .logo {
-  font-size: clamp(46px, 12vw, 80px);
-  font-weight: 900;
-  letter-spacing: .15em;
-  color: var(--work);
-  line-height: 1;
+  font-size: clamp(42px, 11vw, 72px);
+  font-weight: 900; letter-spacing: .15em;
+  color: var(--work); line-height: 1;
   text-shadow: 0 0 40px rgba(232,0,10,.4);
 }
 
-.setup-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+/* メニュー＋負荷 行 */
+.menu-row {
+  display: flex; align-items: center; gap: 8px;
   width: min(360px, 92vw);
+}
+
+.menu-select {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--dim);
+  border-bottom: 2px solid var(--muted);
+  color: var(--text);
+  font-family: 'Barlow Condensed', Arial, sans-serif;
+  font-size: 16px; font-weight: 700;
+  padding: 10px 10px;
+  outline: none; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+}
+
+.load-group {
+  display: flex; gap: 4px;
+}
+
+.load-btn {
+  background: transparent;
+  border: 1px solid var(--dim);
+  color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: .05em;
+  padding: 8px 10px; cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.load-btn.active { border-color: var(--work); color: var(--work); background: rgba(232,0,10,0.1); }
+
+/* 数値グリッド */
+.setup-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; width: min(360px, 92vw);
 }
 
 .field { display: flex; flex-direction: column; gap: 5px; }
 .field.full { grid-column: 1 / -1; }
 
 .field label {
-  font-size: 9px;
-  letter-spacing: .35em;
-  color: var(--muted);
+  font-size: 9px; letter-spacing: .35em; color: var(--muted);
   text-transform: uppercase;
   font-family: 'Share Tech Mono', monospace;
 }
@@ -142,13 +129,9 @@ body > * { position: relative; z-index: 1; }
   border-bottom: 2px solid var(--muted);
   color: var(--text);
   font-family: 'Barlow Condensed', Arial, sans-serif;
-  font-size: 38px;
-  font-weight: 700;
-  text-align: center;
-  padding: 8px 4px;
-  width: 100%;
-  outline: none;
-  -moz-appearance: textfield;
+  font-size: 38px; font-weight: 700;
+  text-align: center; padding: 8px 4px; width: 100%;
+  outline: none; -moz-appearance: textfield;
   transition: border-color .2s;
 }
 .field input[type="number"]::-webkit-inner-spin-button,
@@ -158,93 +141,65 @@ body > * { position: relative; z-index: 1; }
 /* Sound */
 .sound-section {
   width: min(360px, 92vw);
-  border: 1px solid var(--dim);
-  padding: 14px;
+  border: 1px solid var(--dim); padding: 12px;
 }
-
 .sound-title {
-  font-size: 9px;
-  letter-spacing: .35em;
-  color: var(--muted);
+  font-size: 9px; letter-spacing: .35em; color: var(--muted);
   text-transform: uppercase;
-  font-family: 'Share Tech Mono', monospace;
-  margin-bottom: 12px;
+  font-family: 'Share Tech Mono', monospace; margin-bottom: 10px;
 }
-
 .sound-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 8px;
 }
 .sound-row:last-child { margin-bottom: 0; }
-
-.sound-label { font-size: 13px; letter-spacing: .08em; color: var(--rest); flex: 1; }
+.sound-label { font-size: 12px; letter-spacing: .08em; color: var(--rest); flex: 1; }
 .sound-label.c-work { color: var(--work); }
 .sound-label.c-done { color: var(--done); }
-
 .sound-controls { display: flex; align-items: center; gap: 6px; }
-
 .sound-select {
-  background: var(--surface);
-  border: 1px solid var(--dim);
+  background: var(--surface); border: 1px solid var(--dim);
   color: var(--text);
   font-family: 'Share Tech Mono', monospace;
-  font-size: 11px;
-  padding: 5px 8px;
-  outline: none;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  min-width: 100px;
-  text-align: center;
+  font-size: 11px; padding: 4px 8px;
+  outline: none; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  min-width: 95px; text-align: center;
 }
-
 .btn-test {
-  background: transparent;
-  border: 1px solid var(--dim);
+  background: transparent; border: 1px solid var(--dim);
   color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
-  font-size: 10px;
-  padding: 5px 8px;
-  cursor: pointer;
-  transition: all .15s;
+  font-size: 10px; padding: 4px 8px; cursor: pointer;
 }
 .btn-test:active { opacity: .6; }
 
 .btn-start {
-  width: min(360px, 92vw);
-  padding: 15px;
+  width: min(360px, 92vw); padding: 15px;
   font-family: 'Barlow Condensed', Arial, sans-serif;
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: .25em;
-  background: var(--work);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  text-transform: uppercase;
+  font-size: 24px; font-weight: 900; letter-spacing: .25em;
+  background: var(--work); color: #fff;
+  border: none; cursor: pointer; text-transform: uppercase;
 }
 .btn-start:active { opacity: .8; }
 
 /* ======= TIMER ======= */
 #timer {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  padding: 16px 24px 60px;
+  display: none; flex-direction: column;
+  align-items: center; width: 100%; padding: 12px 24px 60px;
+}
+
+.timer-menu-name {
+  font-size: 13px; letter-spacing: .3em; color: var(--muted);
+  font-family: 'Share Tech Mono', monospace;
+  text-transform: uppercase; margin-bottom: 4px; height: 18px;
 }
 
 .phase-banner {
-  font-size: clamp(12px, 3.2vw, 15px);
-  font-weight: 300;
-  letter-spacing: .5em;
-  color: var(--muted);
+  font-size: clamp(12px, 3.2vw, 15px); font-weight: 300;
+  letter-spacing: .5em; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  height: 20px;
+  text-transform: uppercase; margin-bottom: 8px; height: 20px;
   transition: color .4s;
 }
 .phase-banner.work { color: var(--work); }
@@ -252,85 +207,64 @@ body > * { position: relative; z-index: 1; }
 
 .ring-wrap {
   position: relative;
-  width: clamp(220px, 56vw, 290px);
-  height: clamp(220px, 56vw, 290px);
-  margin-bottom: 10px;
+  width: clamp(210px, 54vw, 280px);
+  height: clamp(210px, 54vw, 280px);
+  margin-bottom: 8px;
 }
-
 .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .ring-track { fill: none; stroke: #1a1a1a; stroke-width: 10; }
 .ring-prog {
-  fill: none;
-  stroke: var(--work);
-  stroke-width: 10;
-  stroke-linecap: round;
+  fill: none; stroke: var(--work); stroke-width: 10; stroke-linecap: round;
   transition: stroke-dashoffset .1s linear, stroke .4s;
 }
-
 .ring-center {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
 }
-
 .time-num {
-  font-size: clamp(72px, 18vw, 110px);
-  font-weight: 900;
-  line-height: 1;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  transition: color .4s;
+  font-size: clamp(68px, 17vw, 105px); font-weight: 900; line-height: 1;
+  color: var(--text); font-variant-numeric: tabular-nums; transition: color .4s;
 }
 .time-num.work { color: var(--work); text-shadow: 0 0 28px rgba(232,0,10,.35); }
 .time-num.rest { color: var(--rest); }
 
 .sets-row {
-  display: flex; align-items: baseline; gap: 5px;
-  margin-bottom: 18px;
+  display: flex; align-items: baseline; gap: 5px; margin-bottom: 16px;
 }
 .sets-label {
   font-size: 11px; letter-spacing: .4em; color: var(--muted);
   font-family: 'Share Tech Mono', monospace;
 }
 .sets-count {
-  font-size: clamp(38px, 9vw, 58px);
-  font-weight: 900; line-height: 1;
+  font-size: clamp(36px, 9vw, 56px); font-weight: 900; line-height: 1;
   color: var(--text); font-variant-numeric: tabular-nums;
   min-width: 2ch; text-align: center;
 }
 .sets-total { font-size: 16px; color: var(--muted); font-weight: 300; }
 
 .controls { display: flex; gap: 10px; }
-
 .btn {
   font-family: 'Barlow Condensed', Arial, sans-serif;
   font-size: 16px; font-weight: 700; letter-spacing: .2em;
-  border: 1px solid var(--dim);
-  background: transparent; color: var(--muted);
-  padding: 11px 22px; cursor: pointer;
-  text-transform: uppercase;
+  border: 1px solid var(--dim); background: transparent; color: var(--muted);
+  padding: 11px 22px; cursor: pointer; text-transform: uppercase;
 }
 .btn:active { opacity: .7; }
 .btn.primary { border-color: var(--work); color: var(--work); }
 
 /* ======= DONE ======= */
 #done {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  padding-bottom: 60px;
+  display: none; flex-direction: column;
+  align-items: center; gap: 18px; padding-bottom: 60px;
 }
-
 .done-text {
-  font-size: clamp(68px, 19vw, 116px);
-  font-weight: 900; color: var(--done);
-  letter-spacing: .1em;
-  text-shadow: 0 0 60px rgba(57,255,20,.4);
+  font-size: clamp(68px, 19vw, 116px); font-weight: 900; color: var(--done);
+  letter-spacing: .1em; text-shadow: 0 0 60px rgba(57,255,20,.4);
   animation: glow 1.4s ease-in-out infinite;
 }
 .done-sub {
   font-size: 12px; letter-spacing: .3em; color: var(--muted);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Share Tech Mono', monospace; text-align: center; line-height: 1.8;
 }
 .btn-again {
   font-family: 'Barlow Condensed', Arial, sans-serif;
@@ -353,21 +287,43 @@ body > * { position: relative; z-index: 1; }
 <!-- SETUP -->
 <div id="setup">
   <div class="logo">HIIT</div>
-  <div class="setup-grid">
-    <div class="field">
-      <label>トレーニング（秒）</label>
-      <input type="number" id="inp-work" value="40" min="1" max="999">
-    </div>
-    <div class="field">
-      <label>休憩（秒）</label>
-      <input type="number" id="inp-rest" value="20" min="1" max="999">
-    </div>
-    <div class="field full">
-      <label>セット数</label>
-      <input type="number" id="inp-sets" value="5" min="1" max="99">
+
+  <!-- メニュー選択 + 負荷 -->
+  <div class="menu-row">
+    <select class="menu-select" id="menu-select" onchange="applyMenu()">
+      <option value="custom">— 通常タイマー —</option>
+      <option value="burpee">バーピー</option>
+      <option value="mountain">マウンテンクライマー</option>
+      <option value="highknee">ハイニー</option>
+      <option value="shoulder">ショルダータッププランク</option>
+      <option value="lunge">ジャンピングランジ</option>
+      <option value="squat">ジャンプスクワット</option>
+      <option value="plank">プランク</option>
+    </select>
+    <div class="load-group">
+      <button class="load-btn" id="load-low"    onclick="setLoad('low')">低</button>
+      <button class="load-btn active" id="load-normal" onclick="setLoad('normal')">通常</button>
+      <button class="load-btn" id="load-high"   onclick="setLoad('high')">高</button>
     </div>
   </div>
 
+  <!-- 数値 -->
+  <div class="setup-grid">
+    <div class="field">
+      <label>トレーニング（秒）</label>
+      <input type="number" id="inp-work" value="20" min="1" max="999">
+    </div>
+    <div class="field">
+      <label>休憩（秒）</label>
+      <input type="number" id="inp-rest" value="10" min="1" max="999">
+    </div>
+    <div class="field full">
+      <label>セット数</label>
+      <input type="number" id="inp-sets" value="4" min="1" max="99">
+    </div>
+  </div>
+
+  <!-- サウンド -->
   <div class="sound-section">
     <div class="sound-title">🔊 &nbsp;サウンド設定</div>
     <div class="sound-row">
@@ -417,6 +373,7 @@ body > * { position: relative; z-index: 1; }
 
 <!-- TIMER -->
 <div id="timer">
+  <div class="timer-menu-name" id="timer-menu-name"></div>
   <div class="phase-banner work" id="phase-banner">WORK</div>
   <div class="ring-wrap">
     <svg class="ring-svg" viewBox="0 0 120 120">
@@ -424,13 +381,13 @@ body > * { position: relative; z-index: 1; }
       <circle class="ring-prog" id="ring" cx="60" cy="60" r="52"/>
     </svg>
     <div class="ring-center">
-      <div class="time-num work" id="time-num">40</div>
+      <div class="time-num work" id="time-num">20</div>
     </div>
   </div>
   <div class="sets-row">
     <span class="sets-label">SET&nbsp;</span>
-    <span class="sets-count" id="sets-count">5</span>
-    <span class="sets-total" id="sets-total">&nbsp;/ 5</span>
+    <span class="sets-count" id="sets-count">4</span>
+    <span class="sets-total" id="sets-total">&nbsp;/ 4</span>
   </div>
   <div class="controls">
     <button class="btn primary" id="btn-pp" onclick="togglePause()">PAUSE</button>
@@ -446,6 +403,40 @@ body > * { position: relative; z-index: 1; }
 </div>
 
 <script>
+// ── プリセット定義 ──
+// low / normal / high それぞれ { work, rest, sets }
+const PRESETS = {
+  custom:   { name: '',                    low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
+  burpee:   { name:'バーピー',              low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
+  mountain: { name:'マウンテンクライマー',   low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
+  highknee: { name:'ハイニー',              low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
+  shoulder: { name:'ショルダータッププランク',low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
+  lunge:    { name:'ジャンピングランジ',     low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
+  squat:    { name:'ジャンプスクワット',     low:{work:15,rest:15,sets:3}, normal:{work:20,rest:10,sets:4}, high:{work:25,rest:8,sets:5} },
+  plank:    { name:'プランク',              low:{work:20,rest:15,sets:3}, normal:{work:30,rest:10,sets:4}, high:{work:40,rest:8,sets:5} },
+};
+
+let currentLoad = 'normal';
+
+function setLoad(level) {
+  currentLoad = level;
+  ['low','normal','high'].forEach(l => {
+    document.getElementById('load-' + l).classList.toggle('active', l === level);
+  });
+  applyMenu();
+}
+
+function applyMenu() {
+  const key = document.getElementById('menu-select').value;
+  const preset = PRESETS[key][currentLoad];
+  document.getElementById('inp-work').value = preset.work;
+  document.getElementById('inp-rest').value = preset.rest;
+  document.getElementById('inp-sets').value = preset.sets;
+}
+
+// 初期適用
+applyMenu();
+
 // ── Audio ──
 let ac;
 function getAC() {
@@ -457,9 +448,7 @@ function unlockAudio() {
   if (a.state === 'suspended') a.resume();
   const buf = a.createBuffer(1, 1, 22050);
   const src = a.createBufferSource();
-  src.buffer = buf;
-  src.connect(a.destination);
-  src.start(0);
+  src.buffer = buf; src.connect(a.destination); src.start(0);
 }
 function osc(a, type, freq, start, dur, vol) {
   const o = a.createOscillator();
@@ -471,10 +460,8 @@ function osc(a, type, freq, start, dur, vol) {
   o.start(start); o.stop(start + dur);
 }
 function playBlip(a, t) {
-  const o = a.createOscillator();
-  const g = a.createGain();
-  o.connect(g); g.connect(a.destination);
-  o.type = 'sine';
+  const o = a.createOscillator(), g = a.createGain();
+  o.connect(g); g.connect(a.destination); o.type = 'sine';
   o.frequency.setValueAtTime(440, t);
   o.frequency.exponentialRampToValueAtTime(880, t + 0.1);
   g.gain.setValueAtTime(0.5, t);
@@ -496,27 +483,32 @@ function playSound(type) {
 }
 function testSound(id) { playSound(document.getElementById(id).value); }
 
-// ── State ──
+// ── Timer State ──
 let workSec, restSec, totalSets;
 let remaining, currentSets, isWork;
 let paused = false, raf, lastTick;
 let sndWork, sndRest, sndDone;
+let currentMenuName = '';
 const CIRCUM = 2 * Math.PI * 52;
 
 function startTimer() {
   unlockAudio();
-  workSec   = Math.max(1, parseInt(document.getElementById('inp-work').value) || 40);
-  restSec   = Math.max(1, parseInt(document.getElementById('inp-rest').value) || 20);
-  totalSets = Math.max(1, parseInt(document.getElementById('inp-sets').value) || 5);
+  workSec   = Math.max(1, parseInt(document.getElementById('inp-work').value) || 20);
+  restSec   = Math.max(1, parseInt(document.getElementById('inp-rest').value) || 10);
+  totalSets = Math.max(1, parseInt(document.getElementById('inp-sets').value) || 4);
   sndWork   = document.getElementById('snd-work').value;
   sndRest   = document.getElementById('snd-rest').value;
   sndDone   = document.getElementById('snd-done').value;
+
+  const key = document.getElementById('menu-select').value;
+  currentMenuName = PRESETS[key].name;
 
   currentSets = totalSets;
   isWork      = true;
   remaining   = workSec;
   paused      = false;
 
+  document.getElementById('timer-menu-name').textContent = currentMenuName;
   show('timer');
   document.getElementById('sets-total').textContent = ' / ' + totalSets;
   updateDisplay();
@@ -563,7 +555,6 @@ function updateDisplay() {
   ring.style.strokeDasharray  = CIRCUM;
   ring.style.strokeDashoffset = offset;
   ring.style.stroke = isWork ? 'var(--work)' : 'var(--rest)';
-
   timeEl.textContent = secs;
   timeEl.className   = 'time-num ' + phase;
   banner.textContent = isWork ? 'WORK' : 'REST';
@@ -582,15 +573,17 @@ function goSetup()    { show('setup'); }
 
 function endTimer() {
   cancelAnimationFrame(raf);
+  const loadLabel = { low:'低負荷', normal:'通常', high:'高負荷' }[currentLoad];
   document.getElementById('done-sub').textContent =
-    workSec + 's WORK  ·  ' + restSec + 's REST  ·  ' + totalSets + ' SETS';
+    (currentMenuName || '通常タイマー') + '\n' +
+    workSec + 's WORK  ·  ' + restSec + 's REST  ·  ' + totalSets + ' SETS\n' +
+    loadLabel;
   show('done');
 }
 
 function show(id) {
   ['setup','timer','done'].forEach(s => {
-    const el = document.getElementById(s);
-    el.style.display = (s === id) ? 'flex' : 'none';
+    document.getElementById(s).style.display = (s === id) ? 'flex' : 'none';
   });
 }
 </script>
