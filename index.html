@@ -380,6 +380,19 @@ function getAC() {
   return ac;
 }
 
+// iOSのAudioContextロック解除：無音バッファを再生してunlockする
+function unlockAudio() {
+  const a = getAC();
+  // suspendedなら resume する
+  if (a.state === 'suspended') a.resume();
+  // 無音バッファを1つ再生してiOSのロックを解除
+  const buf = a.createBuffer(1, 1, 22050);
+  const src = a.createBufferSource();
+  src.buffer = buf;
+  src.connect(a.destination);
+  src.start(0);
+}
+
 function makeOsc(a, type, freq, start, dur, vol) {
   const o = a.createOscillator();
   const g = a.createGain();
@@ -427,6 +440,7 @@ let sndWork, sndRest, sndDone;
 const CIRCUM = 2 * Math.PI * 52;
 
 function startTimer() {
+  unlockAudio();
   workSec    = Math.max(1, parseInt(document.getElementById('inp-work').value) || 40);
   restSec    = Math.max(1, parseInt(document.getElementById('inp-rest').value) || 20);
   totalSets  = Math.max(1, parseInt(document.getElementById('inp-sets').value) || 5);
